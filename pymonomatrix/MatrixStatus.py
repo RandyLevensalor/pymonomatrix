@@ -1,21 +1,29 @@
 import yaml
+import requests
+
+api_url = "http://192.168.0.178//cgi-bin/MUH44TP_getsetparams.cgi"
 
 
 class MatrixStatus:
-    def __init__(self, response_string, input_labels, output_video_labels, output_audio_labels):
-        self.response_string = response_string
+    def __init__(self, input_labels, output_video_labels, output_audio_labels):
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
-        self.build_yaml()
+        self.get_status()
+        self.fix_yaml()
         self.decode_volume()
         self.decode_mute()
         self.decode_video_output()
         self.decode_audio_output()
 
-    def build_yaml(self):
+    def get_status(self):
+        # This needs to have a body, but it doesn't matter what it is
+        req_body = {"foo": "bar"}
+        self.response = requests.post(api_url, json=req_body).text
+
+    def fix_yaml(self):
         # Remove the "(" and ")" characters from the response string
-        temp_string = self.response_string
+        temp_string = self.response
         temp_string = temp_string.replace("(", "")
         temp_string = temp_string.replace(")", "")
 

@@ -1,15 +1,9 @@
-import requests
 from MatrixStatus import MatrixStatus
+from SetMatrix import SetMatrix
 
 DEBUG = True
 
-api_url = "http://192.168.0.178//cgi-bin/MUH44TP_getsetparams.cgi"
-
-# This needs to have a body, but it doesn't matter what it is
-req_body = {"foo": "bar"}
-
-response = requests.post(api_url, json=req_body)
-
+# Create the matrix status object
 input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
                 "Chromecast", "Fire TV", "None", "None", "None"]
 output_video_labels = ["Living Room", "Bar", "Master Bed",
@@ -17,15 +11,19 @@ output_video_labels = ["Living Room", "Bar", "Master Bed",
 output_audio_labels = ["Living Room", "Bar", "Master Bed",
                        "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"]
 
-if response.status_code == 200:
-    response_string = response.text
-    curr_status = MatrixStatus(response_string, input_labels, output_video_labels, output_audio_labels)
+curr_status = MatrixStatus(input_labels, output_video_labels, output_audio_labels)
 
 if DEBUG:
-    print(curr_status.volume[0])
-    print(curr_status.mute[0])
+    print(curr_status.volume[7])
+    print(curr_status.mute[7])
     print(curr_status.video_output[0])
     print(curr_status.audio_output[0])
     print(curr_status.input_labels[0])
     print(curr_status.output_video_labels[0])
     print(curr_status.output_audio_labels[0])
+
+setMatrix = SetMatrix(input_labels,
+                      output_video_labels, output_audio_labels)
+setMatrix.set_volume(8, "MU")
+setMatrix.set_video_output(1, 5)
+setMatrix.set_audio_output(1, 12)
