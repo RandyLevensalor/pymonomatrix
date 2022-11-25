@@ -1,6 +1,6 @@
 import requests
 
-api_url = "http://192.168.0.178//cgi-bin/MUH44TP_getsetparams.cgi"
+api_url = "http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi"
 
 
 class SetMatrix:
@@ -12,7 +12,8 @@ class SetMatrix:
     def set_volume(self, output, volume):
         # Set the volume for the given output
         # output is a string, volume is an int
-        # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
+        # output can be "Living Room", "Bar", "Master Bed", "Master Bath",
+        #  "Guest", "Office", "DeckUp", "Deck Down"
         # volume can be 0-100, V+, V-, MU, UM
         # returns True if successful, False if not
 

@@ -9,6 +9,9 @@ class MatrixStatus:
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
+        self.refresh()
+
+    def refresh(self):
         self.get_status()
         self.fix_yaml()
         self.decode_volume()
