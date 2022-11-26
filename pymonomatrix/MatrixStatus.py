@@ -9,7 +9,15 @@ class MatrixStatus:
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
-        self.refresh()
+        self.video_output = [-1, -1, -1, -1, -1, -1, -1, -1]
+        self.volume = [-1, -1, -1, -1, -1, -1, -1, -1]
+        self.mute = [-1, -1, -1, -1, -1, -1, -1, -1]
+        self.audio_output = [-1, -1, -1, -1, -1, -1, -1, -1]
+        self.video_output_changed = [True, True, True, True, True, True, True, True]
+        self.volume_changed = [True, True, True, True, True, True, True, True]
+        self.mute_changed = [True, True, True, True, True, True, True, True]
+        self.audio_output_changed = [True, True,
+                                     True, True, True, True, True, True]
 
     def refresh(self):
         self.get_status()
@@ -36,36 +44,55 @@ class MatrixStatus:
     def decode_volume(self):
         # decode the volume
         temp = self.response_yaml["volume2"]
-        self.volume = []
 
         for i in range(0, 8):
             # Chunk the volume in 3 character blocks
             # Remove "!" for volumes less than 100
-            self.volume.append(temp[i * 3:i * 3 + 3].replace("!", ""))
+            new_volume = int(temp[i * 3:i * 3 + 3].replace("!", ""))
+            # print(f"new_volume: {new_volume}, old_volume: {self.volume[i]}")
+            if new_volume != self.volume[i]:
+                print(f"Volume changed: {new_volume}")
+                self.volume_changed[i] = True
+                print(f"Volume bool: {bool(self.volume_changed[i])}")
+                self.volume[i] = new_volume
+            else:
+                self.volume_changed[i] = False
 
     def decode_mute(self):
         # decode the mute
         temp = self.response_yaml["volume3"]
-        self.mute = []
 
         for i in range(0, 8):
             # Chunk mute
-            self.mute.append(temp[i:i + 1])
+            new_mute = temp[i:i + 1]
+            if new_mute != self.mute[i]:
+                self.mute_changed[i] = True
+                self.mute[i] = new_mute
+            else:
+                self.mute_changed[i] = False
 
     def decode_video_output(self):
         # decode the video output
         temp = self.response_yaml["Outputbuttom"]
-        self.video_output = []
 
         for i in range(0, 8):
             # Chunk output
-            self.video_output.append(temp[i:i + 1])
+            new_output = temp[i:i + 1]
+            if new_output != self.video_output[i]:
+                self.video_output_changed[i] = True
+                self.video_output[i] = new_output
+            else:
+                self.video_output_changed[i] = False
 
     def decode_audio_output(self):
         # decode the audio output
         temp = self.response_yaml["hdmi_buttom"]
-        self.audio_output = []
 
         for i in range(0, 8):
             # Chunk output
-            self.audio_output.append(temp[i * 2:i * 2 + 2])
+            new_output = temp[i * 2:i * 2 + 2]
+            if new_output != self.audio_output[i]:
+                self.audio_output_changed[i] = True
+                self.audio_output[i] = new_output
+            else:
+                self.audio_output_changed[i] = False

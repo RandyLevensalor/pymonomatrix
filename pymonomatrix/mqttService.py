@@ -4,7 +4,6 @@ import time
 import random
 import argparse
 
-
 # Create the matrix status object
 input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
                 "Chromecast", "Fire TV", "None", "None", "None"]
@@ -37,9 +36,15 @@ def connect_mqtt():
     return client
 
 
-def publish(client, curr_status):
+def publish():
+    curr_status = MatrixStatus(
+        input_labels, output_video_labels, output_audio_labels)
+
+    client = connect_mqtt()
+    client.loop_start()
+
     while True:
-        time.sleep(3)
+        time.sleep(1)
         curr_status.refresh()
         classes = ["volume", "mute", "video_output", "audio_output"]
         for curr_class in classes:
@@ -49,24 +54,21 @@ def publish(client, curr_status):
 def publish_class(client, curr_status, topic_class):
     # assign curr_status.volume to a local variable
     value = getattr(curr_status, topic_class)
+    changed = getattr(curr_status, f"{topic_class}_changed")
     for i in range(0, 8):
-        msg = value[i]
-        topic = f"pymonomatrix/{i}-{topic_class}"
-        result = client.publish(topic, str(msg))
-        status = result[0]
-        if status == 0:
-            print(f"Send `{msg}` to topic `{topic}`")
-        else:
-            print(f"Failed to send message to topic {topic}")
+        if bool(changed[i]):
+            msg = value[i]
+            topic = f"pymonomatrix/{i}-{topic_class}"
+            result = client.publish(topic, str(msg))
+            status = result[0]
+            if status == 0:
+                print(f"Send `{msg}` to topic `{topic}`")
+            else:
+                print(f"Failed to send message to topic {topic}")
 
 
 def run():
-    curr_status = MatrixStatus(
-        input_labels, output_video_labels, output_audio_labels)
-
-    client = connect_mqtt()
-    client.loop_start()
-    publish(client, curr_status)
+    publish()
 
 
 if __name__ == '__main__':

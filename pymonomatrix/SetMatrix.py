@@ -18,7 +18,7 @@ class SetMatrix:
         # returns True if successful, False if not
 
         # This needs to have a body, but it doesn't matter what it is
-        req_body = "CMD=AVOLUME0" + str(output) + ":" + volume + "."
+        req_body = "CMD=AVOLUME0" + str(output+1) + ":" + volume + "."
         return self.post_command(req_body)
 
     def set_video_output(self, output: int, input: int):
@@ -28,7 +28,7 @@ class SetMatrix:
         # returns True if successful, False if not
 
         # This needs to have a body, but it doesn't matter what it is
-        req_body = "CMD=OUT0" + str(output) + ":0" + str(input) + "."
+        req_body = "CMD=OUT0" + str(output+1) + ":0" + str(input) + "."
         return self.post_command(req_body)
 
     def set_audio_output(self, output: int, input: int):
@@ -41,7 +41,7 @@ class SetMatrix:
         input_str = str(input)
         if input < 10:
             input_str = "0" + input_str
-        req_body = "CMD=AUDIO0" + str(output) + ":" + input_str + "."
+        req_body = "CMD=AUDIO0" + str(output+1) + ":" + input_str + "."
         return self.post_command(req_body)
 
     def post_command(self, req_body: str):
