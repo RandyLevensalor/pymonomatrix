@@ -16,19 +16,22 @@ class SetMatrix:
         #  "Guest", "Office", "DeckUp", "Deck Down"
         # volume can be 0-100, V+, V-, MU, UM
         # returns True if successful, False if not
-
+        output_index = int(self.output_audio_labels.index(output)) + 1
         # This needs to have a body, but it doesn't matter what it is
-        req_body = "CMD=AVOLUME0" + str(output+1) + ":" + volume + "."
+        req_body = "CMD=AVOLUME0" + str(output_index) + ":" + volume + "."
         return self.post_command(req_body)
 
-    def set_video_output(self, output: int, input: int):
+    def set_video_output(self, output: str, input: str):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
         # input can be 1-8
         # returns True if successful, False if not
 
-        # This needs to have a body, but it doesn't matter what it is
-        req_body = "CMD=OUT0" + str(output+1) + ":0" + str(input) + "."
+        # find index of output in output_video_labels
+        video_index = int(self.output_video_labels.index(output)) + 1
+        audio_index = int(self.input_labels.index(input)) + 1
+
+        req_body = "CMD=OUT0" + str(video_index) + ":0" + str(audio_index) + "."
         return self.post_command(req_body)
 
     def set_audio_output(self, output: int, input: int):

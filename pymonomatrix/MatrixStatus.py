@@ -77,7 +77,7 @@ class MatrixStatus:
 
         for i in range(0, 8):
             # Chunk output
-            new_output = temp[i:i + 1]
+            new_output = self.input_labels[int(temp[i:i + 1]) - 1]
             if new_output != self.video_output[i]:
                 self.video_output_changed[i] = True
                 self.video_output[i] = new_output
@@ -90,7 +90,11 @@ class MatrixStatus:
 
         for i in range(0, 8):
             # Chunk output
-            new_output = temp[i * 2:i * 2 + 2]
+            new_output_index = int(temp[i * 2:i * 2 + 2]) - 1
+            if new_output_index < 8:
+                new_output = self.input_labels[new_output_index]
+            else:
+                new_output = self.output_video_labels[new_output_index - 8]
             if new_output != self.audio_output[i]:
                 self.audio_output_changed[i] = True
                 self.audio_output[i] = new_output

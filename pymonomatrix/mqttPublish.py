@@ -10,7 +10,7 @@ input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
 output_video_labels = ["Living Room", "Bar", "Master Bed",
                        "Master Bath", "Guest", "Office", "Rec Room", "Gym"]
 output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"]
+                       "Master Bath", "Guest", "Office", "Deck Up", "Deck Down"]
 
 curr_status = MatrixStatus(
     input_labels, output_video_labels, output_audio_labels)
@@ -58,7 +58,11 @@ def publish_class(client, curr_status, topic_class):
     for i in range(0, 8):
         if bool(changed[i]):
             msg = value[i]
-            topic = f"pymonomatrix/{i}-{topic_class}"
+            if topic_class == "volume" or topic_class == "mute":
+                room = output_audio_labels[i]
+            else:
+                room = output_video_labels[i]
+            topic = f"pymonomatrix/{room}-{topic_class}"
             result = client.publish(topic, str(msg))
             status = result[0]
             if status == 0:

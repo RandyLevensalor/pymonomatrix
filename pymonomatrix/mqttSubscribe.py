@@ -15,7 +15,7 @@ input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
 output_video_labels = ["Living Room", "Bar", "Master Bed",
                        "Master Bath", "Guest", "Office", "Rec Room", "Gym"]
 output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"]
+                       "Master Bath", "Guest", "Office", "Deck Up", "Deck Down"]
 setMatrix = SetMatrix(input_labels,
                       output_video_labels, output_audio_labels)
 
@@ -40,7 +40,7 @@ def subscribe(client: mqtt_client):
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
         type = topic_suffix_split[1]
-        index = int(topic_suffix_split[0])
+        index = topic_suffix_split[0]
         value = msg.payload.decode()
         print(f"Type:{topic_suffix_split[1]} Index:{topic_suffix_split[0]} Value:{msg.payload.decode()}")
         set_function = getattr(setMatrix, f"set_{type}")
