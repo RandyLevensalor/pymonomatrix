@@ -11,7 +11,7 @@ topic = "pymonomatrix/set/"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
-                "Chromecast", "Fire TV", "None", "None", "None"]
+                "Chromecast", "None", "Fire TV", "None", "None"]
 output_video_labels = ["Living Room", "Bar", "Master Bed",
                        "Master Bath", "Guest", "Office", "Rec Room", "Gym"]
 output_audio_labels = ["Living Room", "Bar", "Master Bed",
