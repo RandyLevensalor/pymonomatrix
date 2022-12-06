@@ -17,6 +17,10 @@ class SetMatrix:
         # volume can be 0-100, V+, V-, MU, UM
         # returns True if successful, False if not
         output_index = int(self.output_audio_labels.index(output)) + 1
+        if volume != "V+" and volume != "V-" and volume != "MU" and volume != "UM":
+            vol_val = int(volume)
+            if vol_val < 10:
+                volume = "0" + str(volume)
         # This needs to have a body, but it doesn't matter what it is
         req_body = "CMD=AVOLUME0" + str(output_index) + ":" + volume + "."
         return self.post_command(req_body)
@@ -29,9 +33,9 @@ class SetMatrix:
 
         # find index of output in output_video_labels
         video_index = int(self.output_video_labels.index(output)) + 1
-        audio_index = int(self.input_labels.index(input)) + 1
+        input_index = int(self.input_labels.index(input)) + 1
 
-        req_body = "CMD=OUT0" + str(video_index) + ":0" + str(audio_index) + "."
+        req_body = "CMD=OUT0" + str(video_index) + ":0" + str(input_index) + "."
         return self.post_command(req_body)
 
     def set_audio_output(self, output: int, input: int):
@@ -41,10 +45,13 @@ class SetMatrix:
         # returns True if successful, False if not
 
         # convert input to a string and pad with a 0 if less than 10
-        input_str = str(input)
-        if input < 10:
+        audio_index = int(self.output_audio_labels.index(output)) + 1
+        input_index = int(self.input_labels.index(input)) + 1
+
+        input_str = str(input_index)
+        if input_index < 10:
             input_str = "0" + input_str
-        req_body = "CMD=AUDIO0" + str(output+1) + ":" + input_str + "."
+        req_body = "CMD=AUDIO0" + str(audio_index) + ":" + input_str + "."
         return self.post_command(req_body)
 
     def post_command(self, req_body: str):

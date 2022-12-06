@@ -58,12 +58,12 @@ def publish_class(client, curr_status, topic_class):
     for i in range(0, 8):
         if bool(changed[i]):
             msg = value[i]
-            if topic_class == "volume" or topic_class == "mute":
+            if topic_class == "volume" or topic_class == "mute" or topic_class == "audio_output":
                 room = output_audio_labels[i]
             else:
                 room = output_video_labels[i]
             topic = f"pymonomatrix/{room}-{topic_class}"
-            result = client.publish(topic, str(msg))
+            result = client.publish(topic, str(msg), qos=0, retain=True)
             status = result[0]
             if status == 0:
                 print(f"Send `{msg}` to topic `{topic}`")
