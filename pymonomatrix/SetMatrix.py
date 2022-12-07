@@ -16,9 +16,17 @@ class SetMatrix:
         #  "Guest", "Office", "DeckUp", "Deck Down"
         # volume can be 0-100, V+, V-, MU, UM
         # returns True if successful, False if not
-        output_index = int(self.output_audio_labels.index(output)) + 1
+        try:
+            output_index = int(self.output_audio_labels.index(output)) + 1
+        except ValueError:
+            print(f"Output {output} not found in output_audio_labels")
+            return False
         if volume != "V+" and volume != "V-" and volume != "MU" and volume != "UM":
-            vol_val = int(volume)
+            try:
+                vol_val = int(volume)
+            except ValueError:
+                print(f"Volume {volume} is not a valid value")
+                return False
             if vol_val < 10:
                 volume = "0" + str(volume)
         # This needs to have a body, but it doesn't matter what it is
@@ -32,8 +40,16 @@ class SetMatrix:
         # returns True if successful, False if not
 
         # find index of output in output_video_labels
-        video_index = int(self.output_video_labels.index(output)) + 1
-        input_index = int(self.input_labels.index(input)) + 1
+        try:
+            video_index = int(self.output_video_labels.index(output)) + 1
+        except ValueError:
+            print(f"Output {output} not found in output_video_labels")
+            return False
+        try:
+            input_index = int(self.input_labels.index(input)) + 1
+        except ValueError:
+            print(f"Input {input} not found in input_labels")
+            return False
 
         req_body = "CMD=OUT0" + str(video_index) + ":0" + str(input_index) + "."
         return self.post_command(req_body)
@@ -45,8 +61,17 @@ class SetMatrix:
         # returns True if successful, False if not
 
         # convert input to a string and pad with a 0 if less than 10
-        audio_index = int(self.output_audio_labels.index(output)) + 1
-        input_index = int(self.input_labels.index(input)) + 1
+        try:
+            audio_index = int(self.output_audio_labels.index(output)) + 1
+        except ValueError:
+            print(f"Output {output} not found in output_audio_labels")
+            return False
+
+        try:
+            input_index = int(self.input_labels.index(input)) + 1
+        except ValueError:
+            print(f"Input {input} not found in input_labels")
+            return False
 
         input_str = str(input_index)
         if input_index < 10:
