@@ -13,9 +13,9 @@ client_id = f'python-mqtt-{random.randint(0, 100)}'
 input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
                 "Chromecast", "None", "Fire TV", "None", "None"]
 output_video_labels = ["Living Room", "Bar", "Master Bed",
-                       "Master Bath", "Guest", "Office", "Rec Room", "Gym"]
+                       "Office", "Guest", "Master Bath", "Rec Room", "Gym"]
 output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Master Bath", "Guest", "Office", "Deck Up", "Deck Down"]
+                       "Office", "Guest", "Master Bath", "Deck Up", "Deck Down"]
 setMatrix = SetMatrix(input_labels,
                       output_video_labels, output_audio_labels)
 
