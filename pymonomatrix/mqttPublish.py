@@ -26,14 +26,20 @@ def connect_mqtt():
         if rc == 0:
             print("Connected to MQTT Broker!")
         else:
-            print("Failed to connect, return code %d\n", rc)
+            print(f"Failed to connect, return code {rc}")
 
-    # Set Connecting Client ID
     client = mqtt_client.Client(client_id)
     client.username_pw_set(username, password)
     client.on_connect = on_connect
-    client.connect(broker, port)
-    return client
+    
+    # Add a retry loop for the initial connection
+    while True:
+        try:
+            client.connect(broker, port)
+            return client
+        except Exception as e:
+            print(f"Network unreachable ({e}). Retrying in 5 seconds...")
+            time.sleep(5)
 
 
 def publish():
