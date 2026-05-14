@@ -16,9 +16,9 @@ def load_config():
             config_file = possible_path
 
     default_config = {
-        "input_labels": ["Roku Ultra", "Roku 3", "Apple TV", "Chromecast", "Fire TV", "None", "None", "None"],
-        "output_video_labels": ["Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "Rec Room", "Gym"],
-        "output_audio_labels": ["Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"]
+        "input_labels": ["Input 1", "Input 2", "Input 3", "Input 4", "Input 5", "Input 6", "Input 7", "Input 8"],
+        "output_video_labels": ["Output 1", "Output 2", "Output 3", "Output 4", "Output 5", "Output 6", "Output 7", "Output 8"],
+        "output_audio_labels": ["Output 1", "Output 2", "Output 3", "Output 4", "Output 5", "Output 6", "Output 7", "Output 8"]
     }
 
     if os.path.exists(config_file):
