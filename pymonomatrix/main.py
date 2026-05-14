@@ -1,16 +1,16 @@
 import argparse
 from SetMatrix import SetMatrix
+from config import load_config
 
 DEBUG = False
 
-# Create the matrix status object
-input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
-                "Chromecast", "Fire TV", "None", "None", "None"]
-output_video_labels = ["Living Room", "Bar", "Master Bed",
-                       "Master Bath", "Guest", "Office", "Rec Room", "Gym"]
-output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"]
+# Load configuration
+config = load_config()
+input_labels = config.get("input_labels")
+output_video_labels = config.get("output_video_labels")
+output_audio_labels = config.get("output_audio_labels")
 
+# Create the matrix status object
 setMatrix = SetMatrix(input_labels,
                       output_video_labels, output_audio_labels)
 

@@ -3,15 +3,15 @@ from paho.mqtt import client as mqtt_client
 import time
 import random
 import argparse
+from config import load_config
+
+# Load configuration
+config = load_config()
+input_labels = config.get("input_labels")
+output_video_labels = config.get("output_video_labels")
+output_audio_labels = config.get("output_audio_labels")
 
 # Create the matrix status object
-input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
-                "Chromecast", "None", "Fire TV", "None", "None"]
-output_video_labels = ["Living Room", "Bar", "Master Bed",
-                       "Office", "Guest", "Master Bath", "Rec Room", "Gym"]
-output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Office", "Guest", "Master Bath", "Deck Up", "Deck Down"]
-
 curr_status = MatrixStatus(
     input_labels, output_video_labels, output_audio_labels)
 
