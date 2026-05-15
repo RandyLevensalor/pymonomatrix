@@ -1,7 +1,9 @@
+import os
 import yaml
 import requests
 
-api_url = "http://192.168.0.178//cgi-bin/MUH44TP_getsetparams.cgi"
+matrix_ip = os.getenv("MONOPRICE_MATRIX_IP", "192.168.0.178")
+api_url = f"http://{matrix_ip}//cgi-bin/MUH44TP_getsetparams.cgi"
 
 
 class MatrixStatus:
