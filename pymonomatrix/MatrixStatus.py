@@ -11,15 +11,14 @@ class MatrixStatus:
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
-        self.video_output = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.volume = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.mute = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.audio_output = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.video_output_changed = [True, True, True, True, True, True, True, True]
-        self.volume_changed = [True, True, True, True, True, True, True, True]
-        self.mute_changed = [True, True, True, True, True, True, True, True]
-        self.audio_output_changed = [True, True,
-                                     True, True, True, True, True, True]
+        self.video_output = [-1] * 8
+        self.volume = [-1] * 8
+        self.mute = [-1] * 8
+        self.audio_output = [-1] * 8
+        self.video_output_changed = [True] * 8
+        self.volume_changed = [True] * 8
+        self.mute_changed = [True] * 8
+        self.audio_output_changed = [True] * 8
 
     def refresh(self):
         self.get_status()
