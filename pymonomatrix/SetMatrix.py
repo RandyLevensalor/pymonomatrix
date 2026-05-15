@@ -23,7 +23,7 @@ class SetMatrix:
         except ValueError:
             print(f"Output {output} not found in output_audio_labels")
             return False
-        if volume != "V+" and volume != "V-" and volume != "MU" and volume != "UM":
+        if volume not in ("V+", "V-", "MU", "UM"):
             try:
                 vol_val = int(volume)
             except ValueError:
