@@ -45,6 +45,12 @@ def subscribe(client: mqtt_client):
         index = topic_suffix_split[0]
         value = msg.payload.decode()
         print(f"Type:{topic_suffix_split[1]} Index:{topic_suffix_split[0]} Value:{msg.payload.decode()}")
+
+        allowed_types = ['volume', 'video_output', 'audio_output']
+        if type not in allowed_types:
+            print(f"Error: Invalid type '{type}' received in topic '{msg.topic}'")
+            return
+
         set_function = getattr(setMatrix, f"set_{type}")
         set_function(index, value)
     client.subscribe(f"{topic}#")
