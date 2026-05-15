@@ -68,14 +68,14 @@ class SetMatrix:
 
         # convert input to a string and pad with a 0 if less than 10
         try:
-            audio_index = self._output_audio_labels_map[output] + 1
-        except KeyError:
+            audio_index = int(self.output_audio_labels.index(output)) + 1
+        except ValueError:
             print(f"Output {output} not found in output_audio_labels")
             return False
 
         try:
-            input_index = self._input_labels_map[input] + 1
-        except KeyError:
+            input_index = int(self.input_labels.index(input)) + 1
+        except ValueError:
             print(f"Input {input} not found in input_labels")
             return False
 

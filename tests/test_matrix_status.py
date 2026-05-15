@@ -23,7 +23,7 @@ class TestMatrixStatus(unittest.TestCase):
         # Assert
         # Check that requests.post was called with the correct parameters
         req_body = {"foo": "bar"}
-        mock_post.assert_called_once_with(api_url, json=req_body)
+        mock_post.assert_called_once_with(api_url, json=req_body, timeout=10)
 
         # Check that self.response is correctly set to the response text
         self.assertEqual(self.matrix_status.response, "mocked response text")
