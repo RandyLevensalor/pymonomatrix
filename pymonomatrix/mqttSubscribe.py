@@ -41,12 +41,21 @@ def subscribe(client: mqtt_client):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
+
+        if len(topic_suffix_split) < 2:
+            print(f"Warning: Ignored malformed topic '{msg.topic}' (missing hyphen delimiter)")
+            return
+
         type = topic_suffix_split[1]
         index = topic_suffix_split[0]
         value = msg.payload.decode()
         print(f"Type:{topic_suffix_split[1]} Index:{topic_suffix_split[0]} Value:{msg.payload.decode()}")
-        set_function = getattr(setMatrix, f"set_{type}")
-        set_function(index, value)
+
+        try:
+            set_function = getattr(setMatrix, f"set_{type}")
+            set_function(index, value)
+        except AttributeError:
+            print(f"Warning: No handler found for type '{type}'")
     client.subscribe(f"{topic}#")
     client.on_message = on_message
 
