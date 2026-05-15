@@ -37,7 +37,7 @@ class SetMatrix:
         req_body = "CMD=AVOLUME0" + str(output_index) + ":" + volume + "."
         return self.post_command(req_body)
 
-    def set_video_output(self, output: str, input: str):
+    def set_video_output(self, output: str, input_val: str):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
         # input can be 1-8
@@ -50,15 +50,15 @@ class SetMatrix:
             print(f"Output {output} not found in output_video_labels")
             return False
         try:
-            input_index = int(self.input_labels.index(input)) + 1
+            input_index = int(self.input_labels.index(input_val)) + 1
         except ValueError:
-            print(f"Input {input} not found in input_labels")
+            print(f"Input {input_val} not found in input_labels")
             return False
 
         req_body = "CMD=OUT0" + str(video_index) + ":0" + str(input_index) + "."
         return self.post_command(req_body)
 
-    def set_audio_output(self, output: int, input: int):
+    def set_audio_output(self, output: int, input_val: int):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
         # input can be 1-8
@@ -72,9 +72,9 @@ class SetMatrix:
             return False
 
         try:
-            input_index = int(self.input_labels.index(input)) + 1
+            input_index = int(self.input_labels.index(input_val)) + 1
         except ValueError:
-            print(f"Input {input} not found in input_labels")
+            print(f"Input {input_val} not found in input_labels")
             return False
 
         input_str = str(input_index)
