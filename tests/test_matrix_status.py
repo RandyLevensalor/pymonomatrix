@@ -23,10 +23,39 @@ class TestMatrixStatus(unittest.TestCase):
         # Assert
         # Check that requests.post was called with the correct parameters
         req_body = {"foo": "bar"}
-        mock_post.assert_called_once_with(api_url, json=req_body)
+        mock_post.assert_called_once_with(api_url, json=req_body, timeout=10)
 
         # Check that self.response is correctly set to the response text
         self.assertEqual(self.matrix_status.response, "mocked response text")
+
+    def test_decode_volume_initial_update(self):
+        self.matrix_status.response_yaml = {
+            "volume2": "100!50!!5000100!50!!5000"
+        }
+        self.matrix_status.decode_volume()
+        expected_volumes = [100, 50, 5, 0, 100, 50, 5, 0]
+        self.assertEqual(self.matrix_status.volume, expected_volumes)
+        self.assertEqual(self.matrix_status.volume_changed, [True] * 8)
+
+    def test_decode_volume_no_change(self):
+        self.matrix_status.volume = [100, 50, 5, 0, 100, 50, 5, 0]
+        self.matrix_status.response_yaml = {
+            "volume2": "100!50!!5000100!50!!5000"
+        }
+        self.matrix_status.decode_volume()
+        self.assertEqual(self.matrix_status.volume, [100, 50, 5, 0, 100, 50, 5, 0])
+        self.assertEqual(self.matrix_status.volume_changed, [False] * 8)
+
+    def test_decode_volume_partial_change(self):
+        self.matrix_status.volume = [100, 50, 5, 0, 100, 50, 5, 0]
+        # Change index 1 (!50 -> !55) and index 2 (!!5 -> !!8)
+        self.matrix_status.response_yaml = {
+            "volume2": "100!55!!8000100!50!!5000"
+        }
+        self.matrix_status.decode_volume()
+        self.assertEqual(self.matrix_status.volume, [100, 55, 8, 0, 100, 50, 5, 0])
+        expected_changed = [False, True, True, False, False, False, False, False]
+        self.assertEqual(self.matrix_status.volume_changed, expected_changed)
 
 if __name__ == '__main__':
     unittest.main()
