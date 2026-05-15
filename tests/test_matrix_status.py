@@ -23,10 +23,30 @@ class TestMatrixStatus(unittest.TestCase):
         # Assert
         # Check that requests.post was called with the correct parameters
         req_body = {"foo": "bar"}
-        mock_post.assert_called_once_with(api_url, json=req_body)
+        mock_post.assert_called_once_with(api_url, json=req_body, timeout=10)
 
         # Check that self.response is correctly set to the response text
         self.assertEqual(self.matrix_status.response, "mocked response text")
+
+    def test_fix_yaml_with_parentheses(self):
+        # Arrange
+        self.matrix_status.response = "(key: value)"
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
+
+    def test_fix_yaml_without_parentheses(self):
+        # Arrange
+        self.matrix_status.response = "key: value"
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
 
 if __name__ == '__main__':
     unittest.main()
