@@ -84,7 +84,7 @@ class SetMatrix:
     def post_command(self, req_body: str):
         # Post the command to the matrix
         print(req_body)
-        response = requests.post(api_url, data=req_body)
+        response = requests.post(api_url, data=req_body, timeout=10)
         if response.status_code == 200:
             return True
         print("Failed to " + req_body + " Response code:" + str(response.status_code))
