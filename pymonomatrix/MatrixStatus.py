@@ -32,7 +32,11 @@ class MatrixStatus:
     def get_status(self):
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
-        self.response = requests.post(api_url, json=req_body, timeout=10).text
+        try:
+            self.response = requests.post(api_url, json=req_body, timeout=10).text
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching status from matrix: {e}")
+            self.response = None
 
     def fix_yaml(self):
         # Remove the "(" and ")" characters from the response string
