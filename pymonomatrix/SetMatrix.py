@@ -1,7 +1,9 @@
 import os
 import requests
 
-matrix_ip = os.getenv("MONOPRICE_MATRIX_IP", "192.168.0.178")
+matrix_ip = os.getenv("MONOPRICE_MATRIX_IP")
+if not matrix_ip:
+    raise ValueError("MONOPRICE_MATRIX_IP environment variable is not set")
 api_url = f"http://{matrix_ip}//cgi-bin/MMX32_Keyvalue.cgi"
 
 
