@@ -36,12 +36,8 @@ class MatrixStatus:
 
     def fix_yaml(self):
         # Remove the "(" and ")" characters from the response string
-        temp_string = self.response
-        temp_string = temp_string.replace("(", "")
-        temp_string = temp_string.replace(")", "")
-
         # convert response string to a yaml object
-        self.response_yaml = yaml.safe_load(temp_string)
+        self.response_yaml = yaml.safe_load(self.response.replace("(", "").replace(")", ""))
 
     def decode_volume(self):
         # decode the volume
