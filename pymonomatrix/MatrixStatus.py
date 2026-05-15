@@ -51,7 +51,6 @@ class MatrixStatus:
             # Chunk the volume in 3 character blocks
             # Remove "!" for volumes less than 100
             new_volume = int(temp[i * 3:i * 3 + 3].replace("!", ""))
-            # print(f"new_volume: {new_volume}, old_volume: {self.volume[i]}")
             if new_volume != self.volume[i]:
                 print(f"Volume changed: {new_volume}")
                 self.volume_changed[i] = True
