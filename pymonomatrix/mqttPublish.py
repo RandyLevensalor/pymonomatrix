@@ -61,13 +61,16 @@ def publish_class(client, curr_status, topic_class):
     # assign curr_status.volume to a local variable
     value = getattr(curr_status, topic_class)
     changed = getattr(curr_status, f"{topic_class}_changed")
+
+    if topic_class in ("volume", "mute", "audio_output"):
+        labels = output_audio_labels
+    else:
+        labels = output_video_labels
+
     for i in range(0, 8):
         if bool(changed[i]):
             msg = value[i]
-            if topic_class == "volume" or topic_class == "mute" or topic_class == "audio_output":
-                room = output_audio_labels[i]
-            else:
-                room = output_video_labels[i]
+            room = labels[i]
             topic = f"pymonomatrix/{room}-{topic_class}"
             result = client.publish(topic, str(msg), qos=0, retain=True)
             status = result[0]
