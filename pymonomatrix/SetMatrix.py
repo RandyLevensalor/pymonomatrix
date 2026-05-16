@@ -30,7 +30,6 @@ class SetMatrix:
         output_index = self._get_index(self.output_audio_labels, output, "output_audio_labels")
         if output_index is None:
             return False
-
         if volume not in ("V+", "V-", "MU", "UM"):
             try:
                 vol_val = int(volume)
@@ -53,9 +52,10 @@ class SetMatrix:
         video_index = self._get_index(self.output_video_labels, output, "output_video_labels")
         if video_index is None:
             return False
-
-        input_index = self._get_index(self.input_labels, input_val, "input_labels", "Input")
-        if input_index is None:
+        try:
+            input_index = int(self.input_labels.index(input_val)) + 1
+        except ValueError:
+            print(f"Input {input_val} not found in input_labels")
             return False
 
         req_body = f"CMD=OUT0{video_index}:0{input_index}."
@@ -72,9 +72,10 @@ class SetMatrix:
         if audio_index is None:
             return False
 
-
-        input_index = self._get_index(self.input_labels, input_val, "input_labels", "Input")
-        if input_index is None:
+        try:
+            input_index = int(self.input_labels.index(input_val)) + 1
+        except ValueError:
+            print(f"Input {input_val} not found in input_labels")
             return False
 
         input_str = str(input_index)
