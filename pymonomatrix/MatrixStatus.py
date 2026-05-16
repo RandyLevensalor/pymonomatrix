@@ -11,15 +11,14 @@ class MatrixStatus:
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
-        self.video_output = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.volume = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.mute = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.audio_output = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.video_output_changed = [True, True, True, True, True, True, True, True]
-        self.volume_changed = [True, True, True, True, True, True, True, True]
-        self.mute_changed = [True, True, True, True, True, True, True, True]
-        self.audio_output_changed = [True, True,
-                                     True, True, True, True, True, True]
+        self.video_output = [-1] * 8
+        self.volume = [-1] * 8
+        self.mute = [-1] * 8
+        self.audio_output = [-1] * 8
+        self.video_output_changed = [True] * 8
+        self.volume_changed = [True] * 8
+        self.mute_changed = [True] * 8
+        self.audio_output_changed = [True] * 8
 
     def refresh(self):
         self.get_status()
@@ -36,12 +35,8 @@ class MatrixStatus:
 
     def fix_yaml(self):
         # Remove the "(" and ")" characters from the response string
-        temp_string = self.response
-        temp_string = temp_string.replace("(", "")
-        temp_string = temp_string.replace(")", "")
-
         # convert response string to a yaml object
-        self.response_yaml = yaml.safe_load(temp_string)
+        self.response_yaml = yaml.safe_load(self.response.replace("(", "").replace(")", ""))
 
     def decode_volume(self):
         # decode the volume
@@ -51,7 +46,6 @@ class MatrixStatus:
             # Chunk the volume in 3 character blocks
             # Remove "!" for volumes less than 100
             new_volume = int(temp[i * 3:i * 3 + 3].replace("!", ""))
-            # print(f"new_volume: {new_volume}, old_volume: {self.volume[i]}")
             if new_volume != self.volume[i]:
                 print(f"Volume changed: {new_volume}")
                 self.volume_changed[i] = True
