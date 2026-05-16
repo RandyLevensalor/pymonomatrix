@@ -38,12 +38,13 @@ def connect_mqtt() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+        payload_decoded = msg.payload.decode()
+        print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
         action_type = topic_suffix_split[1]
         index = topic_suffix_split[0]
-        value = msg.payload.decode()
+        value = payload_decoded
         print(f"Type:{action_type} Index:{index} Value:{value}")
         set_function = getattr(setMatrix, f"set_{action_type}")
         set_function(index, value)
