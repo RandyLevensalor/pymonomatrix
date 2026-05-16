@@ -56,6 +56,7 @@ class TestMatrixStatus(unittest.TestCase):
         self.assertEqual(self.matrix_status.volume, [100, 55, 8, 0, 100, 50, 5, 0])
         expected_changed = [False, True, True, False, False, False, False, False]
         self.assertEqual(self.matrix_status.volume_changed, expected_changed)
+
     def test_fix_yaml_with_parentheses(self):
         # Arrange
         self.matrix_status.response = "(key: value)"
@@ -75,6 +76,49 @@ class TestMatrixStatus(unittest.TestCase):
 
         # Assert
         self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
+
+    @patch('pymonomatrix.MatrixStatus.requests.post')
+    def test_get_status_request_exception(self, mock_post):
+        # Arrange
+        import requests
+        mock_post.side_effect = requests.exceptions.RequestException("Mocked error")
+
+        # Act
+        self.matrix_status.get_status()
+
+        # Assert
+        # Check that requests.post was called with the correct parameters
+        req_body = {"foo": "bar"}
+        mock_post.assert_called_once_with(api_url, json=req_body, timeout=10)
+
+        # Check that self.response is correctly set to None
+        self.assertIsNone(self.matrix_status.response)
+
+    @patch('pymonomatrix.MatrixStatus.requests.post')
+    def test_get_status_connection_error(self, mock_post):
+        # Arrange
+        import requests
+        mock_post.side_effect = requests.exceptions.ConnectionError("Mocked connection error")
+
+        # Act
+        self.matrix_status.get_status()
+
+        # Assert
+        # Check that self.response is correctly set to None
+        self.assertIsNone(self.matrix_status.response)
+
+    @patch('pymonomatrix.MatrixStatus.requests.post')
+    def test_get_status_timeout(self, mock_post):
+        # Arrange
+        import requests
+        mock_post.side_effect = requests.exceptions.Timeout("Mocked timeout error")
+
+        # Act
+        self.matrix_status.get_status()
+
+        # Assert
+        # Check that self.response is correctly set to None
+        self.assertIsNone(self.matrix_status.response)
 
 if __name__ == '__main__':
     unittest.main()

@@ -39,7 +39,7 @@ def connect_mqtt() -> mqtt_client:
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         payload_decoded = msg.payload.decode()
-        print(f"Received {payload_decoded} from {msg.topic} topic")
+        print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
 
@@ -57,6 +57,13 @@ def subscribe(client: mqtt_client):
             set_function(index, value)
         except AttributeError:
             print(f"Warning: No handler found for type '{type}'")
+        allowed_types = ['volume', 'video_output', 'audio_output']
+        if type not in allowed_types:
+            print(f"Error: Invalid type '{type}' received in topic '{msg.topic}'")
+            return
+
+        set_function = getattr(setMatrix, f"set_{type}")
+        set_function(index, value)
     client.subscribe(f"{topic}#")
     client.on_message = on_message
 
