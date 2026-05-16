@@ -38,13 +38,14 @@ def connect_mqtt() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+        payload_decoded = msg.payload.decode()
+        print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
         type = topic_suffix_split[1]
         index = topic_suffix_split[0]
-        value = msg.payload.decode()
-        print(f"Type:{topic_suffix_split[1]} Index:{topic_suffix_split[0]} Value:{msg.payload.decode()}")
+        value = payload_decoded
+        print(f"Type:{type} Index:{index} Value:{payload_decoded}")
 
         allowed_types = ['volume', 'video_output', 'audio_output']
         if type not in allowed_types:
