@@ -49,10 +49,10 @@ def publish():
     client = connect_mqtt()
     client.loop_start()
 
+    classes = ["volume", "mute", "video_output", "audio_output"]
     while True:
         time.sleep(1)
         curr_status.refresh()
-        classes = ["volume", "mute", "video_output", "audio_output"]
         for curr_class in classes:
             publish_class(client, curr_status, curr_class)
 
