@@ -1,7 +1,9 @@
 import os
 import requests
 
-matrix_ip = os.getenv("MONOPRICE_MATRIX_IP", "192.168.0.178")
+matrix_ip = os.getenv("MONOPRICE_MATRIX_IP")
+if not matrix_ip:
+    raise ValueError("MONOPRICE_MATRIX_IP environment variable is not set")
 api_url = f"http://{matrix_ip}//cgi-bin/MMX32_Keyvalue.cgi"
 
 
@@ -29,19 +31,19 @@ class SetMatrix:
         if output_index is None:
             return False
 
-        if volume != "V+" and volume != "V-" and volume != "MU" and volume != "UM":
+        if volume not in ("V+", "V-", "MU", "UM"):
             try:
                 vol_val = int(volume)
             except ValueError:
                 print(f"Volume {volume} is not a valid value")
                 return False
             if vol_val < 10:
-                volume = "0" + str(volume)
+                volume = f"0{volume}"
         # This needs to have a body, but it doesn't matter what it is
-        req_body = "CMD=AVOLUME0" + str(output_index) + ":" + volume + "."
+        req_body = f"CMD=AVOLUME0{output_index}:{volume}."
         return self.post_command(req_body)
 
-    def set_video_output(self, output: str, input: str):
+    def set_video_output(self, output: str, input_val: str):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
         # input can be 1-8
@@ -52,14 +54,14 @@ class SetMatrix:
         if video_index is None:
             return False
 
-        input_index = self._get_index(self.input_labels, input, "input_labels", "Input")
+        input_index = self._get_index(self.input_labels, input_val, "input_labels", "Input")
         if input_index is None:
             return False
 
-        req_body = "CMD=OUT0" + str(video_index) + ":0" + str(input_index) + "."
+        req_body = f"CMD=OUT0{video_index}:0{input_index}."
         return self.post_command(req_body)
 
-    def set_audio_output(self, output: int, input: int):
+    def set_audio_output(self, output: int, input_val: int):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
         # input can be 1-8
@@ -70,14 +72,15 @@ class SetMatrix:
         if audio_index is None:
             return False
 
-        input_index = self._get_index(self.input_labels, input, "input_labels", "Input")
+
+        input_index = self._get_index(self.input_labels, input_val, "input_labels", "Input")
         if input_index is None:
             return False
 
         input_str = str(input_index)
         if input_index < 10:
-            input_str = "0" + input_str
-        req_body = "CMD=AUDIO0" + str(audio_index) + ":" + input_str + "."
+            input_str = f"0{input_str}"
+        req_body = f"CMD=AUDIO0{audio_index}:{input_str}."
         return self.post_command(req_body)
 
     def post_command(self, req_body: str):
@@ -86,5 +89,5 @@ class SetMatrix:
         response = requests.post(api_url, data=req_body, timeout=10)
         if response.status_code == 200:
             return True
-        print("Failed to " + req_body + " Response code:" + str(response.status_code))
+        print(f"Failed to {req_body} Response code:{response.status_code}")
         return False
