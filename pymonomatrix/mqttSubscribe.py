@@ -42,6 +42,11 @@ def subscribe(client: mqtt_client):
         print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
+        action_type = topic_suffix_split[1]
+        index = topic_suffix_split[0]
+        value = payload_decoded
+        print(f"Type:{action_type} Index:{index} Value:{value}")
+        set_function = getattr(setMatrix, f"set_{action_type}")
 
         if len(topic_suffix_split) < 2:
             print(f"Warning: Ignored malformed topic '{msg.topic}' (missing hyphen delimiter)")
