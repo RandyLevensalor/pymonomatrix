@@ -39,7 +39,7 @@ class SetMatrix:
             if vol_val < 10:
                 volume = f"0{volume}"
         # This needs to have a body, but it doesn't matter what it is
-        req_body = "CMD=AVOLUME0" + str(output_index) + ":" + str(volume) + "."
+        req_body = f"CMD=AVOLUME0{output_index}:{volume}."
         return self.post_command(req_body)
 
     def set_video_output(self, output: str, input_val: str):
