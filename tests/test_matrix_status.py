@@ -28,5 +28,25 @@ class TestMatrixStatus(unittest.TestCase):
         # Check that self.response is correctly set to the response text
         self.assertEqual(self.matrix_status.response, "mocked response text")
 
+    def test_fix_yaml_with_parentheses(self):
+        # Arrange
+        self.matrix_status.response = "(key: value)"
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
+
+    def test_fix_yaml_without_parentheses(self):
+        # Arrange
+        self.matrix_status.response = "key: value"
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
+
 if __name__ == '__main__':
     unittest.main()
