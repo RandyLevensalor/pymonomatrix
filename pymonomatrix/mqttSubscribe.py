@@ -42,11 +42,21 @@ def subscribe(client: mqtt_client):
         print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
+
+        if len(topic_suffix_split) < 2:
+            print(f"Warning: Ignored malformed topic '{msg.topic}' (missing hyphen delimiter)")
+            return
+
         type = topic_suffix_split[1]
         index = topic_suffix_split[0]
         value = payload_decoded
         print(f"Type:{type} Index:{index} Value:{payload_decoded}")
 
+        try:
+            set_function = getattr(setMatrix, f"set_{type}")
+            set_function(index, value)
+        except AttributeError:
+            print(f"Warning: No handler found for type '{type}'")
         allowed_types = ['volume', 'video_output', 'audio_output']
         if type not in allowed_types:
             print(f"Error: Invalid type '{type}' received in topic '{msg.topic}'")
