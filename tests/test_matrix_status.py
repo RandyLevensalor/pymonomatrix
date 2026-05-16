@@ -56,6 +56,25 @@ class TestMatrixStatus(unittest.TestCase):
         self.assertEqual(self.matrix_status.volume, [100, 55, 8, 0, 100, 50, 5, 0])
         expected_changed = [False, True, True, False, False, False, False, False]
         self.assertEqual(self.matrix_status.volume_changed, expected_changed)
+    def test_fix_yaml_with_parentheses(self):
+        # Arrange
+        self.matrix_status.response = "(key: value)"
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
+
+    def test_fix_yaml_without_parentheses(self):
+        # Arrange
+        self.matrix_status.response = "key: value"
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
 
 if __name__ == '__main__':
     unittest.main()
