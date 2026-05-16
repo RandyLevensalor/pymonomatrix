@@ -4,18 +4,20 @@ import random
 import argparse
 from SetMatrix import SetMatrix
 from paho.mqtt import client as mqtt_client
+from config import load_config
 
 
 port = 1883
 topic = "pymonomatrix/set/"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
-input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
-                "Chromecast", "None", "Fire TV", "None", "None"]
-output_video_labels = ["Living Room", "Bar", "Master Bed",
-                       "Office", "Guest", "Master Bath", "Rec Room", "Gym"]
-output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Office", "Guest", "Master Bath", "Deck Up", "Deck Down"]
+
+# Load configuration
+config = load_config()
+input_labels = config.get("input_labels")
+output_video_labels = config.get("output_video_labels")
+output_audio_labels = config.get("output_audio_labels")
+
 setMatrix = SetMatrix(input_labels,
                       output_video_labels, output_audio_labels)
 
@@ -25,7 +27,7 @@ def connect_mqtt() -> mqtt_client:
         if rc == 0:
             print("Connected to MQTT Broker!")
         else:
-            print("Failed to connect, return code %d\n", rc)
+            print(f"Failed to connect, return code {rc}")
 
     client = mqtt_client.Client(client_id)
     client.username_pw_set(username, password)
@@ -36,13 +38,35 @@ def connect_mqtt() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+        payload_decoded = msg.payload.decode()
+        print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
+        action_type = topic_suffix_split[1]
+        index = topic_suffix_split[0]
+        value = payload_decoded
+        print(f"Type:{action_type} Index:{index} Value:{value}")
+        set_function = getattr(setMatrix, f"set_{action_type}")
+
+        if len(topic_suffix_split) < 2:
+            print(f"Warning: Ignored malformed topic '{msg.topic}' (missing hyphen delimiter)")
+            return
+
         type = topic_suffix_split[1]
         index = topic_suffix_split[0]
-        value = msg.payload.decode()
-        print(f"Type:{topic_suffix_split[1]} Index:{topic_suffix_split[0]} Value:{msg.payload.decode()}")
+        value = payload_decoded
+        print(f"Type:{type} Index:{index} Value:{payload_decoded}")
+
+        try:
+            set_function = getattr(setMatrix, f"set_{type}")
+            set_function(index, value)
+        except AttributeError:
+            print(f"Warning: No handler found for type '{type}'")
+        allowed_types = ['volume', 'video_output', 'audio_output']
+        if type not in allowed_types:
+            print(f"Error: Invalid type '{type}' received in topic '{msg.topic}'")
+            return
+
         set_function = getattr(setMatrix, f"set_{type}")
         set_function(index, value)
     client.subscribe(f"{topic}#")

@@ -1,7 +1,11 @@
+import os
 import yaml
 import requests
 
-api_url = "http://192.168.0.178//cgi-bin/MUH44TP_getsetparams.cgi"
+matrix_ip = os.getenv("MONOPRICE_MATRIX_IP")
+if not matrix_ip:
+    raise ValueError("MONOPRICE_MATRIX_IP environment variable is not set")
+api_url = f"http://{matrix_ip}//cgi-bin/MUH44TP_getsetparams.cgi"
 
 
 class MatrixStatus:
@@ -9,15 +13,14 @@ class MatrixStatus:
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
-        self.video_output = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.volume = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.mute = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.audio_output = [-1, -1, -1, -1, -1, -1, -1, -1]
-        self.video_output_changed = [True, True, True, True, True, True, True, True]
-        self.volume_changed = [True, True, True, True, True, True, True, True]
-        self.mute_changed = [True, True, True, True, True, True, True, True]
-        self.audio_output_changed = [True, True,
-                                     True, True, True, True, True, True]
+        self.video_output = [-1] * 8
+        self.volume = [-1] * 8
+        self.mute = [-1] * 8
+        self.audio_output = [-1] * 8
+        self.video_output_changed = [True] * 8
+        self.volume_changed = [True] * 8
+        self.mute_changed = [True] * 8
+        self.audio_output_changed = [True] * 8
 
     def refresh(self):
         self.get_status()
@@ -30,16 +33,16 @@ class MatrixStatus:
     def get_status(self):
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
-        self.response = requests.post(api_url, json=req_body).text
+        try:
+            self.response = requests.post(api_url, json=req_body, timeout=10).text
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching status from matrix: {e}")
+            self.response = None
 
     def fix_yaml(self):
         # Remove the "(" and ")" characters from the response string
-        temp_string = self.response
-        temp_string = temp_string.replace("(", "")
-        temp_string = temp_string.replace(")", "")
-
         # convert response string to a yaml object
-        self.response_yaml = yaml.safe_load(temp_string)
+        self.response_yaml = yaml.safe_load(self.response.replace("(", "").replace(")", ""))
 
     def decode_volume(self):
         # decode the volume
@@ -49,7 +52,6 @@ class MatrixStatus:
             # Chunk the volume in 3 character blocks
             # Remove "!" for volumes less than 100
             new_volume = int(temp[i * 3:i * 3 + 3].replace("!", ""))
-            # print(f"new_volume: {new_volume}, old_volume: {self.volume[i]}")
             if new_volume != self.volume[i]:
                 print(f"Volume changed: {new_volume}")
                 self.volume_changed[i] = True

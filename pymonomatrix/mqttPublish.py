@@ -3,15 +3,15 @@ from paho.mqtt import client as mqtt_client
 import time
 import random
 import argparse
+from config import load_config
+
+# Load configuration
+config = load_config()
+input_labels = config.get("input_labels")
+output_video_labels = config.get("output_video_labels")
+output_audio_labels = config.get("output_audio_labels")
 
 # Create the matrix status object
-input_labels = ["Roku Ultra", "Roku 3", "Apple TV",
-                "Chromecast", "None", "Fire TV", "None", "None"]
-output_video_labels = ["Living Room", "Bar", "Master Bed",
-                       "Office", "Guest", "Master Bath", "Rec Room", "Gym"]
-output_audio_labels = ["Living Room", "Bar", "Master Bed",
-                       "Office", "Guest", "Master Bath", "Deck Up", "Deck Down"]
-
 curr_status = MatrixStatus(
     input_labels, output_video_labels, output_audio_labels)
 
@@ -49,10 +49,10 @@ def publish():
     client = connect_mqtt()
     client.loop_start()
 
+    classes = ["volume", "mute", "video_output", "audio_output"]
     while True:
         time.sleep(1)
         curr_status.refresh()
-        classes = ["volume", "mute", "video_output", "audio_output"]
         for curr_class in classes:
             publish_class(client, curr_status, curr_class)
 
@@ -61,13 +61,16 @@ def publish_class(client, curr_status, topic_class):
     # assign curr_status.volume to a local variable
     value = getattr(curr_status, topic_class)
     changed = getattr(curr_status, f"{topic_class}_changed")
+
+    if topic_class in ("volume", "mute", "audio_output"):
+        labels = output_audio_labels
+    else:
+        labels = output_video_labels
+
     for i in range(0, 8):
         if bool(changed[i]):
             msg = value[i]
-            if topic_class == "volume" or topic_class == "mute" or topic_class == "audio_output":
-                room = output_audio_labels[i]
-            else:
-                room = output_video_labels[i]
+            room = labels[i]
             topic = f"pymonomatrix/{room}-{topic_class}"
             result = client.publish(topic, str(msg), qos=0, retain=True)
             status = result[0]
