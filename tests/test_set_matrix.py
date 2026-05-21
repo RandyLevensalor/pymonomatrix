@@ -27,7 +27,7 @@ class TestSetMatrix(unittest.TestCase):
         result = self.set_matrix.post_command("CMD=TEST.")
 
         self.assertTrue(result)
-        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=TEST.")
+        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=TEST.", timeout=10)
 
     def test_post_command_failure(self):
         mock_response = MagicMock()
@@ -48,7 +48,7 @@ class TestSetMatrix(unittest.TestCase):
         result = self.set_matrix.set_volume("A1", 20)
 
         self.assertTrue(result)
-        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=AVOLUME01:20.")
+        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=AVOLUME01:20.", timeout=10)
 
     def test_set_video_output_success(self):
         mock_response = MagicMock()
@@ -60,7 +60,7 @@ class TestSetMatrix(unittest.TestCase):
         result = self.set_matrix.set_video_output("V1", "I1")
 
         self.assertTrue(result)
-        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=OUT01:01.")
+        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=OUT01:01.", timeout=10)
 
     def test_set_audio_output_success(self):
         mock_response = MagicMock()
@@ -72,7 +72,7 @@ class TestSetMatrix(unittest.TestCase):
         result = self.set_matrix.set_audio_output("A1", "I1")
 
         self.assertTrue(result)
-        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=AUDIO01:01.")
+        mock_requests.post.assert_called_with("http://192.168.0.178//cgi-bin/MMX32_Keyvalue.cgi", data="CMD=AUDIO01:01.", timeout=10)
 
 if __name__ == '__main__':
     unittest.main()
