@@ -60,17 +60,17 @@ class TestMqttSubscribe(unittest.TestCase):
     def test_valid_topic(self):
         """Test that a valid topic is processed correctly."""
         mock_msg = MagicMock()
-        mock_msg.topic = f"{mqttSubscribe.topic}1-video"
+        mock_msg.topic = f"{mqttSubscribe.topic}1-video_output"
         mock_msg.payload = b"test_payload"
 
-        # Create a mock set_video function on the mock_set_matrix
-        mock_set_video = MagicMock()
-        setattr(self.mock_set_matrix, 'set_video', mock_set_video)
+        # Create a mock set_video_output function on the mock_set_matrix
+        mock_set_video_output = MagicMock()
+        setattr(self.mock_set_matrix, 'set_video_output', mock_set_video_output)
 
         self.on_message_callback(self.mock_client, None, mock_msg)
 
         # Verify the function was called with correct index and payload
-        mock_set_video.assert_called_once_with("1", "test_payload")
+        mock_set_video_output.assert_called_once_with("1", "test_payload")
 
     def test_valid_topic_invalid_type(self):
         """Test that a valid topic format but invalid type doesn't raise AttributeError."""
