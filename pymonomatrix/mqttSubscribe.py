@@ -38,15 +38,31 @@ def connect_mqtt() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+        payload_decoded = msg.payload.decode()
+        print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
         topic_suffix = msg.topic.removeprefix(topic)
         topic_suffix_split = topic_suffix.split("-")
-        type = topic_suffix_split[1]
+
+        if len(topic_suffix_split) < 2:
+            print(f"Warning: Ignored malformed topic '{msg.topic}' (missing hyphen delimiter)")
+            return
+
+        action_type = topic_suffix_split[1]
         index = topic_suffix_split[0]
-        value = msg.payload.decode()
-        print(f"Type:{topic_suffix_split[1]} Index:{topic_suffix_split[0]} Value:{msg.payload.decode()}")
-        set_function = getattr(setMatrix, f"set_{type}")
-        set_function(index, value)
+        value = payload_decoded
+        print(f"Type:{action_type} Index:{index} Value:{value}")
+
+        allowed_types = ['volume', 'video_output', 'audio_output']
+        if action_type not in allowed_types:
+            print(f"Error: Invalid type '{action_type}' received in topic '{msg.topic}'")
+            return
+
+        try:
+            set_function = getattr(setMatrix, f"set_{action_type}")
+            set_function(index, value)
+        except AttributeError:
+            print(f"Warning: No handler found for type '{action_type}'")
+
     client.subscribe(f"{topic}#")
     client.on_message = on_message
 
