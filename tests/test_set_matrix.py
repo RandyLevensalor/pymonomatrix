@@ -67,13 +67,13 @@ class TestSetMatrix(unittest.TestCase):
         # Output index is 3
         expected_req_body = "CMD=AVOLUME03:50."
         self.set_matrix.post_command.assert_called_once_with(expected_req_body)
+
+    @patch('pymonomatrix.SetMatrix.requests.post')
+    def test_post_command_success(self, mock_post):
         self.input_labels = ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"]
         self.output_video_labels = ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"]
         self.output_audio_labels = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
         self.set_matrix = SetMatrix(self.input_labels, self.output_video_labels, self.output_audio_labels)
-
-    @patch('pymonomatrix.SetMatrix.requests.post')
-    def test_post_command_success(self, mock_post):
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_post.return_value = mock_response
@@ -85,6 +85,10 @@ class TestSetMatrix(unittest.TestCase):
 
     @patch('pymonomatrix.SetMatrix.requests.post')
     def test_post_command_failure(self, mock_post):
+        self.input_labels = ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"]
+        self.output_video_labels = ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"]
+        self.output_audio_labels = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
+        self.set_matrix = SetMatrix(self.input_labels, self.output_video_labels, self.output_audio_labels)
         mock_response = MagicMock()
         mock_response.status_code = 500
         mock_post.return_value = mock_response
@@ -95,6 +99,10 @@ class TestSetMatrix(unittest.TestCase):
 
     @patch('pymonomatrix.SetMatrix.requests.post')
     def test_set_volume_success(self, mock_post):
+        self.input_labels = ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"]
+        self.output_video_labels = ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"]
+        self.output_audio_labels = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
+        self.set_matrix = SetMatrix(self.input_labels, self.output_video_labels, self.output_audio_labels)
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_post.return_value = mock_response
@@ -108,6 +116,10 @@ class TestSetMatrix(unittest.TestCase):
 
     @patch('pymonomatrix.SetMatrix.requests.post')
     def test_set_video_output_success(self, mock_post):
+        self.input_labels = ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"]
+        self.output_video_labels = ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"]
+        self.output_audio_labels = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
+        self.set_matrix = SetMatrix(self.input_labels, self.output_video_labels, self.output_audio_labels)
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_post.return_value = mock_response
@@ -121,6 +133,10 @@ class TestSetMatrix(unittest.TestCase):
 
     @patch('pymonomatrix.SetMatrix.requests.post')
     def test_set_audio_output_success(self, mock_post):
+        self.input_labels = ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"]
+        self.output_video_labels = ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"]
+        self.output_audio_labels = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
+        self.set_matrix = SetMatrix(self.input_labels, self.output_video_labels, self.output_audio_labels)
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_post.return_value = mock_response

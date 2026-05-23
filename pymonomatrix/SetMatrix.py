@@ -36,8 +36,7 @@ class SetMatrix:
             except ValueError:
                 print(f"Volume {volume} is not a valid value")
                 return False
-            if vol_val < 10:
-                volume = f"0{volume}"
+            volume = str(volume).zfill(2)
         # This needs to have a body, but it doesn't matter what it is
         req_body = f"CMD=AVOLUME0{output_index}:{volume}."
         return self.post_command(req_body)
@@ -78,9 +77,7 @@ class SetMatrix:
             print(f"Input {input_val} not found in input_labels")
             return False
 
-        input_str = str(input_index)
-        if input_index < 10:
-            input_str = f"0{input_str}"
+        input_str = str(input_index).zfill(2)
         req_body = f"CMD=AUDIO0{audio_index}:{input_str}."
         return self.post_command(req_body)
 
