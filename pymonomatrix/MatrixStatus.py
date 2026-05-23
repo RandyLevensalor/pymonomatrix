@@ -40,6 +40,8 @@ class MatrixStatus:
             self.response = None
 
     def fix_yaml(self):
+        if not self.response:
+            return
         # Remove the "(" and ")" characters from the response string
         # convert response string to a yaml object
         self.response_yaml = yaml.safe_load(self.response.replace("(", "").replace(")", ""))
