@@ -62,9 +62,10 @@ class SetMatrix:
 
     def set_audio_output(self, output: int, input: int):
         # Set the input for the given output
-        # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
+            input_index = self._input_labels_map[input_val] + 1
         # input can be 1-8
-        # returns True if successful, False if not
+            print(f"Input {input_val} not found in input_labels")
+            return False
 
         # convert input to a string and pad with a 0 if less than 10
         try:
