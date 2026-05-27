@@ -5,16 +5,7 @@ import random
 import argparse
 from config import setup_matrix_object
 
-# Create the matrix status object
-curr_status = setup_matrix_object(MatrixStatus)
-
-# MQTT Parameters
-
-port = 1883
-client_id = f'python-mqtt-{random.randint(0, 1000)}'
-
-
-def connect_mqtt():
+def connect_mqtt(client_id, username, password, broker, port):
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker!")
@@ -35,10 +26,8 @@ def connect_mqtt():
             time.sleep(5)
 
 
-def publish():
-    curr_status = setup_matrix_object(MatrixStatus)
-
-    client = connect_mqtt()
+def publish(client_id, username, password, broker, port, curr_status):
+    client = connect_mqtt(client_id, username, password, broker, port)
     client.loop_start()
 
     classes = ["volume", "mute", "video_output", "audio_output"]
@@ -72,8 +61,8 @@ def publish_class(client, curr_status, topic_class):
                 print(f"Failed to send message to topic {topic}")
 
 
-def run():
-    publish()
+def run(client_id, username, password, broker, port, curr_status):
+    publish(client_id, username, password, broker, port, curr_status)
 
 
 if __name__ == '__main__':
@@ -85,4 +74,11 @@ if __name__ == '__main__':
     username = args.user
     password = args.password
     broker = args.broker
-    run()
+
+    port = 1883
+    client_id = f'python-mqtt-{random.randint(0, 1000)}'
+
+    # Create the matrix status object
+    curr_status = setup_matrix_object(MatrixStatus)
+
+    run(client_id, username, password, broker, port, curr_status)
