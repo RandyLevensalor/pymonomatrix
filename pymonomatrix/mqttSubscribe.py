@@ -4,7 +4,7 @@ import random
 import argparse
 from SetMatrix import SetMatrix
 from paho.mqtt import client as mqtt_client
-from config import load_config
+from config import setup_matrix_object
 
 
 port = 1883
@@ -12,14 +12,7 @@ topic = "pymonomatrix/set/"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
-# Load configuration
-config = load_config()
-input_labels = config.get("input_labels")
-output_video_labels = config.get("output_video_labels")
-output_audio_labels = config.get("output_audio_labels")
-
-setMatrix = SetMatrix(input_labels,
-                      output_video_labels, output_audio_labels)
+setMatrix = setup_matrix_object(SetMatrix)
 
 
 def connect_mqtt() -> mqtt_client:
