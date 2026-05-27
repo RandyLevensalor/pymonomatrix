@@ -3,17 +3,10 @@ from paho.mqtt import client as mqtt_client
 import time
 import random
 import argparse
-from config import load_config
-
-# Load configuration
-config = load_config()
-input_labels = config.get("input_labels")
-output_video_labels = config.get("output_video_labels")
-output_audio_labels = config.get("output_audio_labels")
+from config import setup_matrix_object
 
 # Create the matrix status object
-curr_status = MatrixStatus(
-    input_labels, output_video_labels, output_audio_labels)
+curr_status = setup_matrix_object(MatrixStatus)
 
 # MQTT Parameters
 
@@ -43,8 +36,7 @@ def connect_mqtt():
 
 
 def publish():
-    curr_status = MatrixStatus(
-        input_labels, output_video_labels, output_audio_labels)
+    curr_status = setup_matrix_object(MatrixStatus)
 
     client = connect_mqtt()
     client.loop_start()
@@ -63,9 +55,9 @@ def publish_class(client, curr_status, topic_class):
     changed = getattr(curr_status, f"{topic_class}_changed")
 
     if topic_class in ("volume", "mute", "audio_output"):
-        labels = output_audio_labels
+        labels = curr_status.output_audio_labels
     else:
-        labels = output_video_labels
+        labels = curr_status.output_video_labels
 
     for i in range(0, 8):
         if bool(changed[i]):

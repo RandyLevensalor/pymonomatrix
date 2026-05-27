@@ -35,3 +35,11 @@ def load_config():
 
     # Default values if file doesn't exist or parsing fails
     return default_config
+
+
+def setup_matrix_object(matrix_class):
+    config = load_config()
+    input_labels = config.get("input_labels")
+    output_video_labels = config.get("output_video_labels")
+    output_audio_labels = config.get("output_audio_labels")
+    return matrix_class(input_labels, output_video_labels, output_audio_labels)

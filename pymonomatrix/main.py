@@ -1,18 +1,11 @@
 import argparse
 from SetMatrix import SetMatrix
-from config import load_config
+from config import setup_matrix_object
 
 DEBUG = False
 
-# Load configuration
-config = load_config()
-input_labels = config.get("input_labels")
-output_video_labels = config.get("output_video_labels")
-output_audio_labels = config.get("output_audio_labels")
-
 # Create the matrix status object
-setMatrix = SetMatrix(input_labels,
-                      output_video_labels, output_audio_labels)
+setMatrix = setup_matrix_object(SetMatrix)
 
 if DEBUG:
     setMatrix.set_volume(8, "MU")
