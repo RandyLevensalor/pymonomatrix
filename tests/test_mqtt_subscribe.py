@@ -19,24 +19,19 @@ class TestMqttSubscribe(unittest.TestCase):
 
         self.mock_client.subscribe = mock_subscribe
 
-        # Patch the SetMatrix to avoid actually trying to contact anything
-        self.set_matrix_patcher = patch('pymonomatrix.mqttSubscribe.setMatrix')
-        self.mock_set_matrix = self.set_matrix_patcher.start()
+        self.mock_set_matrix = MagicMock()
 
         # Set up the subscribe module
-        mqttSubscribe.subscribe(self.mock_client)
+        mqttSubscribe.subscribe(self.mock_client, "pymonomatrix/set/", self.mock_set_matrix)
 
         # Capture the callback
         self.on_message_callback = self.mock_client.on_message
-
-    def tearDown(self):
-        self.set_matrix_patcher.stop()
 
     def test_malformed_topic_no_hyphen(self):
         """Test that a topic without a hyphen doesn't raise IndexError."""
         # Create a mock message with a topic that will not split into 2 parts
         mock_msg = MagicMock()
-        mock_msg.topic = f"{mqttSubscribe.topic}invalidtopic"
+        mock_msg.topic = "pymonomatrix/set/invalidtopic"
         mock_msg.payload = b"test_payload"
 
         # This should not raise an exception
@@ -60,7 +55,7 @@ class TestMqttSubscribe(unittest.TestCase):
     def test_valid_topic(self):
         """Test that a valid topic is processed correctly."""
         mock_msg = MagicMock()
-        mock_msg.topic = f"{mqttSubscribe.topic}1-video_output"
+        mock_msg.topic = "pymonomatrix/set/1-video_output"
         mock_msg.payload = b"test_payload"
 
         # Create a mock set_video_output function on the mock_set_matrix
@@ -75,7 +70,7 @@ class TestMqttSubscribe(unittest.TestCase):
     def test_valid_topic_invalid_type(self):
         """Test that a valid topic format but invalid type doesn't raise AttributeError."""
         mock_msg = MagicMock()
-        mock_msg.topic = f"{mqttSubscribe.topic}1-invalidtype"
+        mock_msg.topic = "pymonomatrix/set/1-invalidtype"
         mock_msg.payload = b"test_payload"
 
         # This should not raise an exception
