@@ -8,9 +8,9 @@ DEBUG = False
 setMatrix = setup_matrix_object(SetMatrix)
 
 if DEBUG:
-    setMatrix.set_volume(8, "MU")
-    setMatrix.set_video_output(1, 5)
-    setMatrix.set_audio_output(1, 12)
+    setMatrix.set_volume("Living Room", "MU")
+    setMatrix.set_video_output("Living Room", "Roku Ultra")
+    setMatrix.set_audio_output("Living Room", "None")
 
 # parse the command line arguments
 argparser = argparse.ArgumentParser()
