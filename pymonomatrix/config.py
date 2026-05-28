@@ -17,9 +17,9 @@ def load_config():
             config_file = possible_path
 
     default_config = {
-        "input_labels": ["Input 1", "Input 2", "Input 3", "Input 4", "Input 5", "Input 6", "Input 7", "Input 8"],
-        "output_video_labels": ["Output 1", "Output 2", "Output 3", "Output 4", "Output 5", "Output 6", "Output 7", "Output 8"],
-        "output_audio_labels": ["Output 1", "Output 2", "Output 3", "Output 4", "Output 5", "Output 6", "Output 7", "Output 8"]
+        "input_labels": [f"Input {i}" for i in range(1, 9)],
+        "output_video_labels": [f"Output {i}" for i in range(1, 9)],
+        "output_audio_labels": [f"Output {i}" for i in range(1, 9)]
     }
 
     if os.path.exists(config_file):
