@@ -2,15 +2,8 @@ import argparse
 from SetMatrix import SetMatrix
 from config import setup_matrix_object
 
-DEBUG = False
-
 # Create the matrix status object
 setMatrix = setup_matrix_object(SetMatrix)
-
-if DEBUG:
-    setMatrix.set_volume("Living Room", "MU")
-    setMatrix.set_video_output("Living Room", "Roku Ultra")
-    setMatrix.set_audio_output("Living Room", "None")
 
 # parse the command line arguments
 argparser = argparse.ArgumentParser()
