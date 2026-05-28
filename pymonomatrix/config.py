@@ -1,5 +1,6 @@
 import os
 import yaml
+import logging
 
 DEFAULT_CONFIG_FILE = "config.yaml"
 
@@ -29,9 +30,9 @@ def load_config():
                 default_config.update(config)
                 return default_config
             except yaml.YAMLError as e:
-                print(f"Error parsing config file {config_file}: {e}")
+                logging.error(f"Error parsing config file {config_file}: {e}")
     else:
-        print(f"Warning: Configuration file {config_file} not found. Using default labels.")
+        logging.warning(f"Configuration file {config_file} not found. Using default labels.")
 
     # Default values if file doesn't exist or parsing fails
     return default_config
