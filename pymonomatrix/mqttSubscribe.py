@@ -2,6 +2,7 @@
 
 import random
 import argparse
+import sys
 from SetMatrix import SetMatrix
 from paho.mqtt import client as mqtt_client
 from config import setup_matrix_object
@@ -55,7 +56,16 @@ def subscribe(client: mqtt_client, topic: str, setMatrix: SetMatrix):
 def run(client_id, username, password, broker, port, topic, setMatrix):
     client = connect_mqtt(client_id, username, password, broker, port)
     subscribe(client, topic, setMatrix)
-    client.loop_forever()
+    try:
+        rc = client.loop_forever()
+        return rc
+    except KeyboardInterrupt:
+        print("Interrupted by user. Exiting...")
+        client.disconnect()
+        return 0
+    except Exception as e:
+        print(f"Error during MQTT loop: {e}")
+        return 1
 
 
 if __name__ == '__main__':
@@ -75,4 +85,4 @@ if __name__ == '__main__':
 
     setMatrix = setup_matrix_object(SetMatrix)
 
-    run(client_id, username, password, broker, port, topic, setMatrix)
+    sys.exit(run(client_id, username, password, broker, port, topic, setMatrix))
