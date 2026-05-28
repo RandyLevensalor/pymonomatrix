@@ -1,9 +1,8 @@
 from MatrixStatus import MatrixStatus
 from paho.mqtt import client as mqtt_client
 import time
-import random
-import argparse
 from config import setup_matrix_object
+
 
 def connect_mqtt(client_id, username, password, broker, port):
     def on_connect(client, userdata, flags, rc):
@@ -15,7 +14,7 @@ def connect_mqtt(client_id, username, password, broker, port):
     client = mqtt_client.Client(client_id)
     client.username_pw_set(username, password)
     client.on_connect = on_connect
-    
+
     # Add a retry loop for the initial connection
     while True:
         try:
@@ -66,6 +65,9 @@ def run(client_id, username, password, broker, port, curr_status):
 
 
 if __name__ == '__main__':
+    import argparse
+    import random
+
     argparser = argparse.ArgumentParser()
     argparser.add_argument("user", help="username for the MQTT broker")
     argparser.add_argument("password", help="password for the MQTT broker")
