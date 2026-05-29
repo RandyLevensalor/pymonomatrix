@@ -2,9 +2,10 @@
 
 import argparse
 import sys
-from SetMatrix import SetMatrix
-from paho.mqtt import client as mqtt_client
+
 from config import setup_matrix_object
+from paho.mqtt import client as mqtt_client
+from SetMatrix import SetMatrix
 
 
 def connect_mqtt(client_id, username, password, broker, port) -> mqtt_client:

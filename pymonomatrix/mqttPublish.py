@@ -1,7 +1,8 @@
+import time
+
+from config import setup_matrix_object
 from MatrixStatus import MatrixStatus
 from paho.mqtt import client as mqtt_client
-import time
-from config import setup_matrix_object
 
 
 def connect_mqtt(client_id, username, password, broker, port):
