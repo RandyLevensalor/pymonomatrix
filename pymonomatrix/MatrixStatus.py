@@ -21,6 +21,7 @@ class MatrixStatus:
         self.volume_changed = [True] * 8
         self.mute_changed = [True] * 8
         self.audio_output_changed = [True] * 8
+        self.session = requests.Session()
 
     def refresh(self):
         self.get_status()
@@ -34,7 +35,7 @@ class MatrixStatus:
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
         try:
-            self.response = requests.post(api_url, json=req_body, timeout=10).text
+            self.response = self.session.post(api_url, json=req_body, timeout=10).text
         except requests.exceptions.RequestException as e:
             print(f"Error fetching status from matrix: {e}")
             self.response = None

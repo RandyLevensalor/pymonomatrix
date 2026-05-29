@@ -16,6 +16,7 @@ class SetMatrix:
         self._input_labels_map = {label: i for i, label in enumerate(input_labels)}
         self._output_video_labels_map = {label: i for i, label in enumerate(output_video_labels)}
         self._output_audio_labels_map = {label: i for i, label in enumerate(output_audio_labels)}
+        self.session = requests.Session()
 
     def _get_index(self, labels_map, item, list_name, item_type="Output"):
         try:
@@ -85,7 +86,7 @@ class SetMatrix:
     def post_command(self, req_body: str):
         # Post the command to the matrix
         print(req_body)
-        response = requests.post(api_url, data=req_body, timeout=10)
+        response = self.session.post(api_url, data=req_body, timeout=10)
         if response.status_code == 200:
             return True
         print(f"Failed to {req_body} Response code:{response.status_code}")
