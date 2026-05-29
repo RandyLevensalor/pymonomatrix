@@ -1,6 +1,5 @@
 # python3.6
 
-import random
 import argparse
 import sys
 from SetMatrix import SetMatrix
@@ -69,6 +68,7 @@ def run(client_id, username, password, broker, port, topic, setMatrix):
 
 
 if __name__ == '__main__':
+    import uuid
     argparser = argparse.ArgumentParser()
     argparser.add_argument("user", help="username for the MQTT broker")
     argparser.add_argument("password", help="password for the MQTT broker")
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     port = 1883
     topic = "pymonomatrix/set/"
     # generate client ID with pub prefix randomly
-    client_id = f'python-mqtt-{random.randint(0, 100)}'
+    client_id = f'python-mqtt-{uuid.uuid4().hex}'
 
     setMatrix = setup_matrix_object(SetMatrix)
 

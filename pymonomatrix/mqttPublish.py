@@ -66,7 +66,7 @@ def run(client_id, username, password, broker, port, curr_status):
 
 if __name__ == '__main__':
     import argparse
-    import random
+    import uuid
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument("user", help="username for the MQTT broker")
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     broker = args.broker
 
     port = 1883
-    client_id = f'python-mqtt-{random.randint(0, 1000)}'
+    client_id = f'python-mqtt-{uuid.uuid4().hex}'
 
     # Create the matrix status object
     curr_status = setup_matrix_object(MatrixStatus)
