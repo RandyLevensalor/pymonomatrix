@@ -21,7 +21,6 @@ class MatrixStatus:
         self.volume_changed = [True] * 8
         self.mute_changed = [True] * 8
         self.audio_output_changed = [True] * 8
-        self.session = requests.Session()
 
     def refresh(self):
         self.get_status()
@@ -35,7 +34,7 @@ class MatrixStatus:
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
         try:
-            self.response = self.session.post(api_url, json=req_body, timeout=10).text
+            self.response = requests.post(api_url, json=req_body, timeout=10).text
         except requests.exceptions.RequestException as e:
             print(f"Error fetching status from matrix: {e}")
             self.response = None
@@ -45,7 +44,7 @@ class MatrixStatus:
             return
         # Remove the "(" and ")" characters from the response string
         # convert response string to a yaml object
-        self.response_yaml = yaml.safe_load(self.response.strip("()"))
+        self.response_yaml = yaml.safe_load(self.response.replace("(", "").replace(")", ""))
 
     def decode_volume(self):
         # decode the volume

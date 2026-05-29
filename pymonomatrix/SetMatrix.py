@@ -49,7 +49,7 @@ class SetMatrix:
     def set_video_output(self, output: str, input_val: str):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
-        # input can be a string matching an input label (e.g. "Roku Ultra", "Roku 3", etc.)
+        # input can be 1-8
         # returns True if successful, False if not
 
         # find index of output in output_video_labels
@@ -64,10 +64,10 @@ class SetMatrix:
         req_body = f"CMD=OUT0{video_index}:0{input_index}."
         return self.post_command(req_body)
 
-    def set_audio_output(self, output: str, input_val: str):
+    def set_audio_output(self, output: int, input_val: int):
         # Set the input for the given output
         # output can be "Living Room", "Bar", "Master Bed", "Master Bath", "Guest", "Office", "DeckUp", "Deck Down"
-        # input can be a string matching an input label (e.g. "Roku Ultra", "Roku 3", etc.)
+        # input can be 1-8
         # returns True if successful, False if not
 
         # convert input to a string and pad with a 0 if less than 10

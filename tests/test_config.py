@@ -53,10 +53,10 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(config, expected_config)
         mock_env_get.assert_called_with("PYMONOMATRIX_CONFIG", DEFAULT_CONFIG_FILE)
 
-    @patch('logging.error')
+    @patch('builtins.print')
     @patch('os.path.exists')
     @patch('os.environ.get')
-    def test_load_config_invalid_yaml(self, mock_env_get, mock_path_exists, mock_logging_error):
+    def test_load_config_invalid_yaml(self, mock_env_get, mock_path_exists, mock_print):
         # Arrange
         fake_path = "config.yaml"
         mock_env_get.return_value = fake_path
@@ -75,8 +75,8 @@ class TestConfig(unittest.TestCase):
 
         # Assert
         self.assertEqual(config, self.default_expected_config)
-        mock_logging_error.assert_called_once()
-        self.assertTrue("Error parsing config file" in mock_logging_error.call_args[0][0])
+        mock_print.assert_called_once()
+        self.assertTrue("Error parsing config file" in mock_print.call_args[0][0])
 
 if __name__ == '__main__':
     unittest.main()

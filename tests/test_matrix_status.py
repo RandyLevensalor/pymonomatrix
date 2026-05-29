@@ -10,7 +10,7 @@ class TestMatrixStatus(unittest.TestCase):
         output_audio_labels = [f"Output Audio {i}" for i in range(1, 9)]
         self.matrix_status = MatrixStatus(input_labels, output_video_labels, output_audio_labels)
 
-    @patch('requests.Session.post')
+    @patch('pymonomatrix.MatrixStatus.requests.post')
     def test_get_status(self, mock_post):
         # Arrange
         mock_response = MagicMock()
@@ -21,7 +21,7 @@ class TestMatrixStatus(unittest.TestCase):
         self.matrix_status.get_status()
 
         # Assert
-        # Check that self.session.post was called with the correct parameters
+        # Check that requests.post was called with the correct parameters
         req_body = {"foo": "bar"}
         mock_post.assert_called_once_with(api_url, json=req_body, timeout=10)
 
@@ -77,7 +77,7 @@ class TestMatrixStatus(unittest.TestCase):
         # Assert
         self.assertEqual(self.matrix_status.response_yaml, {"key": "value"})
 
-    @patch('requests.Session.post')
+    @patch('pymonomatrix.MatrixStatus.requests.post')
     def test_get_status_request_exception(self, mock_post):
         # Arrange
         import requests
@@ -87,14 +87,14 @@ class TestMatrixStatus(unittest.TestCase):
         self.matrix_status.get_status()
 
         # Assert
-        # Check that self.session.post was called with the correct parameters
+        # Check that requests.post was called with the correct parameters
         req_body = {"foo": "bar"}
         mock_post.assert_called_once_with(api_url, json=req_body, timeout=10)
 
         # Check that self.response is correctly set to None
         self.assertIsNone(self.matrix_status.response)
 
-    @patch('requests.Session.post')
+    @patch('pymonomatrix.MatrixStatus.requests.post')
     def test_get_status_connection_error(self, mock_post):
         # Arrange
         import requests
@@ -107,7 +107,7 @@ class TestMatrixStatus(unittest.TestCase):
         # Check that self.response is correctly set to None
         self.assertIsNone(self.matrix_status.response)
 
-    @patch('requests.Session.post')
+    @patch('pymonomatrix.MatrixStatus.requests.post')
     def test_get_status_timeout(self, mock_post):
         # Arrange
         import requests

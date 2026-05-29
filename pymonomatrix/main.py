@@ -2,8 +2,15 @@ import argparse
 from SetMatrix import SetMatrix
 from config import setup_matrix_object
 
+DEBUG = False
+
 # Create the matrix status object
 setMatrix = setup_matrix_object(SetMatrix)
+
+if DEBUG:
+    setMatrix.set_volume(8, "MU")
+    setMatrix.set_video_output(1, 5)
+    setMatrix.set_audio_output(1, 12)
 
 # parse the command line arguments
 argparser = argparse.ArgumentParser()

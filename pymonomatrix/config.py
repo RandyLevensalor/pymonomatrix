@@ -1,6 +1,5 @@
 import os
 import yaml
-import logging
 
 DEFAULT_CONFIG_FILE = "config.yaml"
 
@@ -17,9 +16,9 @@ def load_config():
             config_file = possible_path
 
     default_config = {
-        "input_labels": [f"Input {i}" for i in range(1, 9)],
-        "output_video_labels": [f"Output {i}" for i in range(1, 9)],
-        "output_audio_labels": [f"Output {i}" for i in range(1, 9)]
+        "input_labels": ["Input 1", "Input 2", "Input 3", "Input 4", "Input 5", "Input 6", "Input 7", "Input 8"],
+        "output_video_labels": ["Output 1", "Output 2", "Output 3", "Output 4", "Output 5", "Output 6", "Output 7", "Output 8"],
+        "output_audio_labels": ["Output 1", "Output 2", "Output 3", "Output 4", "Output 5", "Output 6", "Output 7", "Output 8"]
     }
 
     if os.path.exists(config_file):
@@ -30,9 +29,9 @@ def load_config():
                 default_config.update(config)
                 return default_config
             except yaml.YAMLError as e:
-                logging.error(f"Error parsing config file {config_file}: {e}")
+                print(f"Error parsing config file {config_file}: {e}")
     else:
-        logging.warning(f"Configuration file {config_file} not found. Using default labels.")
+        print(f"Warning: Configuration file {config_file} not found. Using default labels.")
 
     # Default values if file doesn't exist or parsing fails
     return default_config

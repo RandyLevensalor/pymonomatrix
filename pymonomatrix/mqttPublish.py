@@ -1,9 +1,9 @@
-import time
-
-from config import setup_matrix_object
 from MatrixStatus import MatrixStatus
 from paho.mqtt import client as mqtt_client
-
+import time
+import random
+import argparse
+from config import setup_matrix_object
 
 def connect_mqtt(client_id, username, password, broker, port):
     def on_connect(client, userdata, flags, rc):
@@ -66,9 +66,6 @@ def run(client_id, username, password, broker, port, curr_status):
 
 
 if __name__ == '__main__':
-    import argparse
-    import uuid
-
     argparser = argparse.ArgumentParser()
     argparser.add_argument("user", help="username for the MQTT broker")
     argparser.add_argument("password", help="password for the MQTT broker")
@@ -79,7 +76,7 @@ if __name__ == '__main__':
     broker = args.broker
 
     port = 1883
-    client_id = f'python-mqtt-{uuid.uuid4().hex}'
+    client_id = f'python-mqtt-{random.randint(0, 1000)}'
 
     # Create the matrix status object
     curr_status = setup_matrix_object(MatrixStatus)

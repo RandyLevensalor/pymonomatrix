@@ -1,11 +1,10 @@
 # python3.6
 
+import random
 import argparse
-import sys
-
-from config import setup_matrix_object
-from paho.mqtt import client as mqtt_client
 from SetMatrix import SetMatrix
+from paho.mqtt import client as mqtt_client
+from config import setup_matrix_object
 
 
 def connect_mqtt(client_id, username, password, broker, port) -> mqtt_client:
@@ -56,20 +55,10 @@ def subscribe(client: mqtt_client, topic: str, setMatrix: SetMatrix):
 def run(client_id, username, password, broker, port, topic, setMatrix):
     client = connect_mqtt(client_id, username, password, broker, port)
     subscribe(client, topic, setMatrix)
-    try:
-        rc = client.loop_forever()
-        return rc
-    except KeyboardInterrupt:
-        print("Interrupted by user. Exiting...")
-        client.disconnect()
-        return 0
-    except Exception as e:
-        print(f"Error during MQTT loop: {e}")
-        return 1
+    client.loop_forever()
 
 
 if __name__ == '__main__':
-    import uuid
     argparser = argparse.ArgumentParser()
     argparser.add_argument("user", help="username for the MQTT broker")
     argparser.add_argument("password", help="password for the MQTT broker")
@@ -82,8 +71,8 @@ if __name__ == '__main__':
     port = 1883
     topic = "pymonomatrix/set/"
     # generate client ID with pub prefix randomly
-    client_id = f'python-mqtt-{uuid.uuid4().hex}'
+    client_id = f'python-mqtt-{random.randint(0, 100)}'
 
     setMatrix = setup_matrix_object(SetMatrix)
 
-    sys.exit(run(client_id, username, password, broker, port, topic, setMatrix))
+    run(client_id, username, password, broker, port, topic, setMatrix)
