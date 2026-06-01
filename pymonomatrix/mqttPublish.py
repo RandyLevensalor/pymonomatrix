@@ -3,9 +3,25 @@ from paho.mqtt import client as mqtt_client
 import time
 import random
 import argparse
-from config import setup_matrix_object
+from config import load_config
 
-def connect_mqtt(client_id, username, password, broker, port):
+# Load configuration
+config = load_config()
+input_labels = config.get("input_labels")
+output_video_labels = config.get("output_video_labels")
+output_audio_labels = config.get("output_audio_labels")
+
+# Create the matrix status object
+curr_status = MatrixStatus(
+    input_labels, output_video_labels, output_audio_labels)
+
+# MQTT Parameters
+
+port = 1883
+client_id = f'python-mqtt-{random.randint(0, 1000)}'
+
+
+def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker!")
@@ -26,8 +42,11 @@ def connect_mqtt(client_id, username, password, broker, port):
             time.sleep(5)
 
 
-def publish(client_id, username, password, broker, port, curr_status):
-    client = connect_mqtt(client_id, username, password, broker, port)
+def publish():
+    curr_status = MatrixStatus(
+        input_labels, output_video_labels, output_audio_labels)
+
+    client = connect_mqtt()
     client.loop_start()
 
     classes = ["volume", "mute", "video_output", "audio_output"]
@@ -44,9 +63,9 @@ def publish_class(client, curr_status, topic_class):
     changed = getattr(curr_status, f"{topic_class}_changed")
 
     if topic_class in ("volume", "mute", "audio_output"):
-        labels = curr_status.output_audio_labels
+        labels = output_audio_labels
     else:
-        labels = curr_status.output_video_labels
+        labels = output_video_labels
 
     for i in range(0, 8):
         if bool(changed[i]):
@@ -61,8 +80,8 @@ def publish_class(client, curr_status, topic_class):
                 print(f"Failed to send message to topic {topic}")
 
 
-def run(client_id, username, password, broker, port, curr_status):
-    publish(client_id, username, password, broker, port, curr_status)
+def run():
+    publish()
 
 
 if __name__ == '__main__':
@@ -74,11 +93,4 @@ if __name__ == '__main__':
     username = args.user
     password = args.password
     broker = args.broker
-
-    port = 1883
-    client_id = f'python-mqtt-{random.randint(0, 1000)}'
-
-    # Create the matrix status object
-    curr_status = setup_matrix_object(MatrixStatus)
-
-    run(client_id, username, password, broker, port, curr_status)
+    run()

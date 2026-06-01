@@ -4,10 +4,25 @@ import random
 import argparse
 from SetMatrix import SetMatrix
 from paho.mqtt import client as mqtt_client
-from config import setup_matrix_object
+from config import load_config
 
 
-def connect_mqtt(client_id, username, password, broker, port) -> mqtt_client:
+port = 1883
+topic = "pymonomatrix/set/"
+# generate client ID with pub prefix randomly
+client_id = f'python-mqtt-{random.randint(0, 100)}'
+
+# Load configuration
+config = load_config()
+input_labels = config.get("input_labels")
+output_video_labels = config.get("output_video_labels")
+output_audio_labels = config.get("output_audio_labels")
+
+setMatrix = SetMatrix(input_labels,
+                      output_video_labels, output_audio_labels)
+
+
+def connect_mqtt() -> mqtt_client:
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker!")
@@ -21,7 +36,7 @@ def connect_mqtt(client_id, username, password, broker, port) -> mqtt_client:
     return client
 
 
-def subscribe(client: mqtt_client, topic: str, setMatrix: SetMatrix):
+def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         payload_decoded = msg.payload.decode()
         print(f"Received `{payload_decoded}` from `{msg.topic}` topic")
@@ -52,9 +67,9 @@ def subscribe(client: mqtt_client, topic: str, setMatrix: SetMatrix):
     client.on_message = on_message
 
 
-def run(client_id, username, password, broker, port, topic, setMatrix):
-    client = connect_mqtt(client_id, username, password, broker, port)
-    subscribe(client, topic, setMatrix)
+def run():
+    client = connect_mqtt()
+    subscribe(client)
     client.loop_forever()
 
 
@@ -68,11 +83,4 @@ if __name__ == '__main__':
     password = args.password
     broker = args.broker
 
-    port = 1883
-    topic = "pymonomatrix/set/"
-    # generate client ID with pub prefix randomly
-    client_id = f'python-mqtt-{random.randint(0, 100)}'
-
-    setMatrix = setup_matrix_object(SetMatrix)
-
-    run(client_id, username, password, broker, port, topic, setMatrix)
+    run()
