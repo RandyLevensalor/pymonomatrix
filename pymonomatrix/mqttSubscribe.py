@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     port = 1883
     topic = "pymonomatrix/set/"
-    # generate client ID with pub prefix randomly
+    # generate client ID with pub prefix securely using a UUID
     client_id = f'python-mqtt-{uuid.uuid4().hex}'
 
     setMatrix = setup_matrix_object(SetMatrix)
