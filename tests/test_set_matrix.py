@@ -13,14 +13,14 @@ class TestSetMatrix(unittest.TestCase):
         input_labels = [f"Input {i}" for i in range(1, 9)]
         output_video_labels = [f"Output Video {i}" for i in range(1, 9)]
         output_audio_labels = [f"Output Audio {i}" for i in range(1, 9)]
-        self.set_matrix = SetMatrix(input_labels, output_video_labels, output_audio_labels)
+        self.set_matrix = SetMatrix("192.168.0.178", input_labels, output_video_labels, output_audio_labels)
         # Mock post_command to prevent actual network calls during tests
         self.set_matrix.post_command = MagicMock(return_value=True)
 
         self.input_labels = ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"]
         self.output_video_labels = ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"]
         self.output_audio_labels = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
-        self.set_matrix2 = SetMatrix(self.input_labels, self.output_video_labels, self.output_audio_labels)
+        self.set_matrix2 = SetMatrix("192.168.0.178", self.input_labels, self.output_video_labels, self.output_audio_labels)
 
 
     def test_set_volume_invalid_output(self):

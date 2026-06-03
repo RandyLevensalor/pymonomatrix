@@ -1,14 +1,9 @@
-import os
 import requests
-
-matrix_ip = os.getenv("MONOPRICE_MATRIX_IP")
-if not matrix_ip:
-    raise ValueError("MONOPRICE_MATRIX_IP environment variable is not set")
-api_url = f"http://{matrix_ip}//cgi-bin/MMX32_Keyvalue.cgi"
 
 
 class SetMatrix:
-    def __init__(self, input_labels, output_video_labels, output_audio_labels):
+    def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels):
+        self.api_url = f"http://{matrix_ip}//cgi-bin/MMX32_Keyvalue.cgi"
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
@@ -86,7 +81,7 @@ class SetMatrix:
     def post_command(self, req_body: str):
         # Post the command to the matrix
         print(req_body)
-        response = self.session.post(api_url, data=req_body, timeout=10)
+        response = self.session.post(self.api_url, data=req_body, timeout=10)
         if response.status_code == 200:
             return True
         print(f"Failed to {req_body} Response code:{response.status_code}")

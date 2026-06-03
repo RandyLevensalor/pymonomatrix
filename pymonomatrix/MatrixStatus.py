@@ -1,15 +1,10 @@
-import os
 import yaml
 import requests
 
-matrix_ip = os.getenv("MONOPRICE_MATRIX_IP")
-if not matrix_ip:
-    raise ValueError("MONOPRICE_MATRIX_IP environment variable is not set")
-api_url = f"http://{matrix_ip}//cgi-bin/MUH44TP_getsetparams.cgi"
-
 
 class MatrixStatus:
-    def __init__(self, input_labels, output_video_labels, output_audio_labels):
+    def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels):
+        self.api_url = f"http://{matrix_ip}//cgi-bin/MUH44TP_getsetparams.cgi"
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
@@ -35,7 +30,7 @@ class MatrixStatus:
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
         try:
-            self.response = self.session.post(api_url, json=req_body, timeout=10).text
+            self.response = self.session.post(self.api_url, json=req_body, timeout=10).text
         except requests.exceptions.RequestException as e:
             print(f"Error fetching status from matrix: {e}")
             self.response = None
