@@ -38,9 +38,16 @@ def load_config():
     return default_config
 
 
+def get_matrix_ip():
+    matrix_ip = os.getenv("MONOPRICE_MATRIX_IP")
+    if not matrix_ip:
+        raise ValueError("MONOPRICE_MATRIX_IP environment variable is not set")
+    return matrix_ip
+
 def setup_matrix_object(matrix_class):
+    matrix_ip = get_matrix_ip()
     config = load_config()
     input_labels = config.get("input_labels")
     output_video_labels = config.get("output_video_labels")
     output_audio_labels = config.get("output_audio_labels")
-    return matrix_class(input_labels, output_video_labels, output_audio_labels)
+    return matrix_class(matrix_ip, input_labels, output_video_labels, output_audio_labels)
