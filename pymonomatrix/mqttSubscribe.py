@@ -1,9 +1,8 @@
 # python3.6
 
-import argparse
 import sys
 
-from config import setup_matrix_object
+from config import setup_matrix_object, parse_mqtt_args
 from paho.mqtt import client as mqtt_client
 from SetMatrix import SetMatrix
 
@@ -69,20 +68,10 @@ def run(client_id, username, password, broker, port, topic, setMatrix):
 
 
 if __name__ == '__main__':
-    import uuid
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument("user", help="username for the MQTT broker")
-    argparser.add_argument("password", help="password for the MQTT broker")
-    argparser.add_argument("broker", help="IP address of the MQTT broker")
-    args = argparser.parse_args()
-    username = args.user
-    password = args.password
-    broker = args.broker
+    username, password, broker, client_id = parse_mqtt_args()
 
     port = 1883
     topic = "pymonomatrix/set/"
-    # generate client ID with pub prefix securely using a UUID
-    client_id = f'python-mqtt-{uuid.uuid4().hex}'
 
     setMatrix = setup_matrix_object(SetMatrix)
 
