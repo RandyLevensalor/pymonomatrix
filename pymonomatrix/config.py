@@ -51,3 +51,19 @@ def setup_matrix_object(matrix_class):
     output_video_labels = config.get("output_video_labels")
     output_audio_labels = config.get("output_audio_labels")
     return matrix_class(matrix_ip, input_labels, output_video_labels, output_audio_labels)
+
+def parse_mqtt_args():
+    import argparse
+    import uuid
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("user", help="username for the MQTT broker")
+    argparser.add_argument("password", help="password for the MQTT broker")
+    argparser.add_argument("broker", help="IP address of the MQTT broker")
+    args = argparser.parse_args()
+
+    username = args.user
+    password = args.password
+    broker = args.broker
+    client_id = f'python-mqtt-{uuid.uuid4().hex}'
+
+    return username, password, broker, client_id
