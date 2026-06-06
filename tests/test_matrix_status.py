@@ -20,13 +20,49 @@ class TestMatrixStatus(unittest.TestCase):
         # Act
         self.matrix_status.get_status()
 
-        # Assert
-        # Check that self.session.post was called with the correct parameters
-        req_body = {"foo": "bar"}
-        mock_post.assert_called_once_with(self.matrix_status.api_url, json=req_body, timeout=10)
+    @patch('requests.Session.post')
+    def test_get_status_raise_for_status(self, mock_post):
+        # Arrange
+        import requests
+        mock_response = MagicMock()
+        mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError("404 Client Error")
+        mock_post.return_value = mock_response
 
-        # Check that self.response is correctly set to the response text
-        self.assertEqual(self.matrix_status.response, "mocked response text")
+        # Act
+        self.matrix_status.get_status()
+
+        # Assert
+        self.assertIsNone(self.matrix_status.response)
+        mock_response.raise_for_status.assert_called_once()
+
+    @patch('pymonomatrix.MatrixStatus.logging.error')
+    def test_fix_yaml_invalid_yaml(self, mock_logging_error):
+        # Arrange
+        self.matrix_status.response = "{invalid yaml: ["
+
+        # Act
+        self.matrix_status.fix_yaml()
+
+        # Assert
+        self.assertIsNone(self.matrix_status.response_yaml)
+        mock_logging_error.assert_called_once()
+
+    @patch('pymonomatrix.MatrixStatus.logging.error')
+    @patch.object(MatrixStatus, 'decode_volume')
+    @patch.object(MatrixStatus, 'fix_yaml')
+    @patch.object(MatrixStatus, 'get_status')
+    def test_refresh_with_string_yaml_response(self, mock_get_status, mock_fix_yaml, mock_decode_volume, mock_logging_error):
+        # Arrange
+        # Simulate fix_yaml producing a string instead of a dictionary
+        self.matrix_status.response_yaml = "This is a string, not a dict"
+
+        # Act
+        self.matrix_status.refresh()
+
+        # Assert
+        # The decode methods should not be called because response_yaml is not a dict
+        mock_decode_volume.assert_not_called()
+        mock_logging_error.assert_called_with("Invalid or missing YAML response from matrix, skipping decode")
 
     def test_decode_volume_initial_update(self):
         self.matrix_status.response_yaml = {

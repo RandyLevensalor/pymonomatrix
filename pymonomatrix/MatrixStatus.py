@@ -1,5 +1,6 @@
 import yaml
 import requests
+import logging
 
 
 class MatrixStatus:
@@ -21,6 +22,9 @@ class MatrixStatus:
     def refresh(self):
         self.get_status()
         self.fix_yaml()
+        if not hasattr(self, 'response_yaml') or not isinstance(self.response_yaml, dict):
+            logging.error("Invalid or missing YAML response from matrix, skipping decode")
+            return
         self.decode_volume()
         self.decode_mute()
         self.decode_video_output()
@@ -30,9 +34,11 @@ class MatrixStatus:
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
         try:
-            self.response = self.session.post(self.api_url, json=req_body, timeout=10).text
+            response = self.session.post(self.api_url, json=req_body, timeout=10)
+            response.raise_for_status()
+            self.response = response.text
         except requests.exceptions.RequestException as e:
-            print(f"Error fetching status from matrix: {e}")
+            logging.error(f"Error fetching status from matrix: {e}")
             self.response = None
 
     def fix_yaml(self):
@@ -40,7 +46,13 @@ class MatrixStatus:
             return
         # Remove the "(" and ")" characters from the response string
         # convert response string to a yaml object
-        self.response_yaml = yaml.safe_load(self.response.strip("()"))
+        import re
+        fixed_response = re.sub(r':(?!\s)', ': ', self.response.strip("()"))
+        try:
+            self.response_yaml = yaml.safe_load(fixed_response)
+        except yaml.YAMLError as e:
+            logging.error(f"Error parsing YAML from matrix: {e}")
+            self.response_yaml = None
 
     def _update_state(self, state_array, changed_array, index, new_value):
         changed = (new_value != state_array[index])
