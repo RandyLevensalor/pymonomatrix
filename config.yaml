@@ -12,9 +12,9 @@ output_video_labels:
   - "Living Room"
   - "Bar"
   - "Master Bed"
-  - "Master Bath"
-  - "Guest"
   - "Office"
+  - "Guest"
+  - "Master Bath"
   - "Rec Room"
   - "Gym"
 
