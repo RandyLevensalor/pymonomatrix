@@ -47,7 +47,7 @@ class MatrixStatus:
         # Remove the "(" and ")" characters from the response string
         # convert response string to a yaml object
         import re
-        fixed_response = re.sub(r':(?!\s)', ': ', self.response.strip("()"))
+        fixed_response = re.sub(r':(?!\s)', ': ', self.response.strip().strip("()"))
         try:
             self.response_yaml = yaml.safe_load(fixed_response)
         except yaml.YAMLError as e:
@@ -65,7 +65,7 @@ class MatrixStatus:
 
     def decode_volume(self):
         # decode the volume
-        temp = self.response_yaml["volume2"]
+        temp = str(self.response_yaml.get("volume2", ""))
 
         for i in range(0, 8):
             # Chunk the volume in 3 character blocks
@@ -77,7 +77,7 @@ class MatrixStatus:
 
     def decode_mute(self):
         # decode the mute
-        temp = self.response_yaml["volume3"]
+        temp = str(self.response_yaml.get("volume3", "")).zfill(8)
 
         for i in range(0, 8):
             # Chunk mute
@@ -86,7 +86,7 @@ class MatrixStatus:
 
     def decode_video_output(self):
         # decode the video output
-        temp = self.response_yaml["Outputbuttom"]
+        temp = str(self.response_yaml.get("Outputbuttom", "")).zfill(8)
 
         for i in range(0, 8):
             # Chunk output
@@ -95,7 +95,7 @@ class MatrixStatus:
 
     def decode_audio_output(self):
         # decode the audio output
-        temp = self.response_yaml["hdmi_buttom"]
+        temp = str(self.response_yaml.get("hdmi_buttom", "")).zfill(16)
 
         for i in range(0, 8):
             # Chunk output
