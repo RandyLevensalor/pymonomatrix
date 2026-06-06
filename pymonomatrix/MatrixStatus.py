@@ -5,7 +5,7 @@ import logging
 
 class MatrixStatus:
     def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels):
-        self.api_url = f"http://{matrix_ip}//cgi-bin/MUH44TP_getsetparams.cgi"
+        self.api_url = f"http://{matrix_ip}/cgi-bin/MUH44TP_getsetparams.cgi"
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
@@ -18,6 +18,7 @@ class MatrixStatus:
         self.mute_changed = [True] * 8
         self.audio_output_changed = [True] * 8
         self.session = requests.Session()
+        self.session.headers.update({'Connection': 'close'})
 
     def refresh(self):
         self.get_status()
@@ -34,7 +35,7 @@ class MatrixStatus:
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
         try:
-            response = self.session.post(self.api_url, json=req_body, timeout=10)
+            response = self.session.post(self.api_url, data=req_body, timeout=10)
             response.raise_for_status()
             self.response = response.text
         except requests.exceptions.RequestException as e:

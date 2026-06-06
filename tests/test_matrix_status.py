@@ -125,7 +125,7 @@ class TestMatrixStatus(unittest.TestCase):
         # Assert
         # Check that self.session.post was called with the correct parameters
         req_body = {"foo": "bar"}
-        mock_post.assert_called_once_with(self.matrix_status.api_url, json=req_body, timeout=10)
+        mock_post.assert_called_once_with(self.matrix_status.api_url, data=req_body, timeout=10)
 
         # Check that self.response is correctly set to None
         self.assertIsNone(self.matrix_status.response)
