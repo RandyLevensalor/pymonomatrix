@@ -3,7 +3,7 @@ import requests
 
 class SetMatrix:
     def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels):
-        self.api_url = f"http://{matrix_ip}//cgi-bin/MMX32_Keyvalue.cgi"
+        self.api_url = f"http://{matrix_ip}/cgi-bin/MMX32_Keyvalue.cgi"
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
@@ -12,6 +12,7 @@ class SetMatrix:
         self._output_video_labels_map = {label: i for i, label in enumerate(output_video_labels)}
         self._output_audio_labels_map = {label: i for i, label in enumerate(output_audio_labels)}
         self.session = requests.Session()
+        self.session.headers.update({'Connection': 'close'})
 
     def _get_index(self, labels_map, item, list_name, item_type="Output"):
         try:
