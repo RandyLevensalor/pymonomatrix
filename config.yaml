@@ -25,5 +25,5 @@ output_audio_labels:
   - "Office"
   - "Guest"
   - "Master Bath"
-  - "DeckUp"
+  - "Deck Up"
   - "Deck Down"
