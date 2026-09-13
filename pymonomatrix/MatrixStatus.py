@@ -4,11 +4,12 @@ import logging
 
 
 class MatrixStatus:
-    def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels):
+    def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels, timeout=5):
         self.api_url = f"http://{matrix_ip}/cgi-bin/MUH44TP_getsetparams.cgi"
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
+        self.timeout = timeout
         self.video_output = [-1] * 8
         self.volume = [-1] * 8
         self.mute = [-1] * 8
@@ -17,6 +18,8 @@ class MatrixStatus:
         self.volume_changed = [True] * 8
         self.mute_changed = [True] * 8
         self.audio_output_changed = [True] * 8
+        self.last_status_failed = False
+        self._force_full_refresh = False
         self.session = requests.Session()
         self.session.headers.update({'Connection': 'close'})
 
@@ -30,17 +33,23 @@ class MatrixStatus:
         self.decode_mute()
         self.decode_video_output()
         self.decode_audio_output()
+        self._force_full_refresh = False
 
     def get_status(self):
         # This needs to have a body, but it doesn't matter what it is
         req_body = {"foo": "bar"}
         try:
-            response = self.session.post(self.api_url, data=req_body, timeout=10)
+            response = self.session.post(self.api_url, data=req_body, timeout=self.timeout)
             response.raise_for_status()
             self.response = response.text
+            if self.last_status_failed:
+                logging.info("Recovered connection to matrix, forcing full state refresh")
+                self.last_status_failed = False
+                self._force_full_refresh = True
         except requests.exceptions.RequestException as e:
             logging.error(f"Error fetching status from matrix: {e}")
             self.response = None
+            self.last_status_failed = True
 
     def fix_yaml(self):
         if not self.response:
@@ -56,7 +65,7 @@ class MatrixStatus:
             self.response_yaml = None
 
     def _update_state(self, state_array, changed_array, index, new_value):
-        changed = (new_value != state_array[index])
+        changed = (new_value != state_array[index]) or self._force_full_refresh
         if changed:
             changed_array[index] = True
             state_array[index] = new_value

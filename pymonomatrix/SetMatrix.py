@@ -1,12 +1,15 @@
+import time
 import requests
+import logging
 
 
 class SetMatrix:
-    def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels):
+    def __init__(self, matrix_ip, input_labels, output_video_labels, output_audio_labels, timeout=5):
         self.api_url = f"http://{matrix_ip}/cgi-bin/MMX32_Keyvalue.cgi"
         self.input_labels = input_labels
         self.output_video_labels = output_video_labels
         self.output_audio_labels = output_audio_labels
+        self.timeout = timeout
 
         self._input_labels_map = {label: i for i, label in enumerate(input_labels)}
         self._output_video_labels_map = {label: i for i, label in enumerate(output_video_labels)}
@@ -79,11 +82,17 @@ class SetMatrix:
         req_body = f"CMD=AUDIO0{audio_index}:{input_str}."
         return self.post_command(req_body)
 
-    def post_command(self, req_body: str):
+    def post_command(self, req_body: str, max_retries: int = 2):
         # Post the command to the matrix
         print(req_body)
-        response = self.session.post(self.api_url, data=req_body, timeout=10)
-        if response.status_code == 200:
-            return True
-        print(f"Failed to {req_body} Response code:{response.status_code}")
+        for attempt in range(max_retries + 1):
+            try:
+                response = self.session.post(self.api_url, data=req_body, timeout=self.timeout)
+                if response.status_code == 200:
+                    return True
+                print(f"Failed to {req_body} Response code:{response.status_code}")
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Error posting command {req_body} (attempt {attempt + 1}/{max_retries + 1}): {e}")
+            if attempt < max_retries:
+                time.sleep(0.5)
         return False
